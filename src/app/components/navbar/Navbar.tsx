@@ -8,7 +8,6 @@ export default function NavBar({
 }: {
   likedAlbums: Album[];
 }) {
-  console.log(likedAlbums);
   return (
     <header className="w-full h-16 sticky top-0 flex  items-center z-10 bg-principal">
       <nav className="w-full p-4 flex">

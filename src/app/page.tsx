@@ -19,15 +19,20 @@ export default function Home() {
 
   
   const handleAddLikedAlbum = (album: Album) => {
-    if (!likedAlbums.some((likedAlbums) => likedAlbums.id === album.id)) {
+    if (!likedAlbums.some((likedAlbums) => likedAlbums.albumId === album.albumId)) {
       album.isAddedLike=true;
       setLikedAlbums([...likedAlbums, album]);
     }
   };
+  const handleRemoveLikedAlbum=(album:Album)=>{
+  const remove=likedAlbums.filter(likedAlbum => likedAlbum.albumId !== album.albumId);
+   setLikedAlbums(remove);
+  }
   return (
     <main className="min-h-screen ">
       <NavBar likedAlbums={likedAlbums} />
-      <ListAlbum onAddLikedAlbum={handleAddLikedAlbum} />
+      <ListAlbum onAddLikedAlbum={handleAddLikedAlbum}  onRemoveLikedAlbum={handleRemoveLikedAlbum}/>
     </main>
+    
   );
 }

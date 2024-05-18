@@ -7,9 +7,11 @@ import { RemoveAlbumIcon } from "./../../components/Icons/RemoveAlbum";
 export function AlbumCard({
   album,
   onAddLikedAlbum,
+  onRemoveLikedAlbum,
 }: {
   album: Album;
   onAddLikedAlbum: Function;
+  onRemoveLikedAlbum: Function;
 }) {
   // Estado para controlar si el mouse está sobre el componente
   const [isHovered, setIsHovered] = useState(false);
@@ -35,10 +37,11 @@ export function AlbumCard({
   };
   const removeAlbumClick = () => {
     setIsAddedLikeAlbum(false);
+    onRemoveLikedAlbum(album);
   };
   return (
     <div
-      key={album.id}
+      key={album.albumId}
       className="rounded bg-principal flex flex-col gap-4 p-4"
     >
       <div
@@ -48,12 +51,12 @@ export function AlbumCard({
       >
         <img
           className="rounded w-full absolute"
-          src={album.image}
+          src={"data:image/png;base64,"+album.imgAlbum}
           alt="photo of band"
         />
         {!isAddedLikeAlbum ? (
           <AddAlbumIcon
-            key={"addAlbum-" + album.id}
+            key={"addAlbum-" + album.albumId}
             className={
               "absolute bottom-3 right-3 rounded-full p-2 bg-like text-principal cursor-pointer stroke-2  " +
               hoverClass
@@ -64,7 +67,7 @@ export function AlbumCard({
           />
         ) : (
           <RemoveAlbumIcon
-            key={"addAlbum-" + album.id}
+            key={"addAlbum-" + album.albumId}
             className={
               " block transition delay-150 duration-300 ease-in-out scale-110 absolute bottom-3 right-3 rounded-full p-2 bg-liked text-like cursor-pointer stroke-2  "
             }
@@ -79,8 +82,8 @@ export function AlbumCard({
           {album.name}
         </h3>
         <span>
-          {album.artist.map(function(artist,index){
-            return artist.name+" ";
+          {album.artists.map(function (artist, index) {
+            return artist.name + " ";
           })}
         </span>
       </div>

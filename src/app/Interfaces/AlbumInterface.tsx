@@ -1,9 +1,10 @@
 import {Artist} from './ArtistInterface'
 export interface Album {
-    id:string;
+    albumId:string;
     image: string;
     name: string;
-    artist: Artist[];
+    artists: Artist[];
     isAddedLike?:boolean;
+    imgAlbum?:string
   }
   
