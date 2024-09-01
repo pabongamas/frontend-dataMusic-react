@@ -6,5 +6,5 @@ export interface AddAlbumProps {
     height?: string;
     showText?: boolean;
     likedAlbums?:Album[];
-    addOrRemoveAlbumLike?:()=>void;
+    addOrRemoveAlbumLike?:(event: React.MouseEvent)=>void;
   }

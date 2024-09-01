@@ -1,8 +1,12 @@
 "use client"; // This is a client component 👈🏽
-import { useState, useCallback } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useCallback, useState } from "react";
+import notFound from "../../../../public/img/notFound.png";
+import { RemoveAlbumIcon } from "./../../components/Icons/RemoveAlbum";
 import { Album } from "./../../Interfaces/AlbumInterface";
 import { AddAlbumIcon } from "./../Icons/AddAlbum";
-import { RemoveAlbumIcon } from "./../../components/Icons/RemoveAlbum";
+import { NOTFOUND } from "dns";
 
 export function AlbumCard({
   album,
@@ -17,6 +21,14 @@ export function AlbumCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isAddedLikeAlbum, setIsAddedLikeAlbum] = useState(false);
 
+  // constants for the routes
+  const URL_ALBUM_INFO = "/AlbumInfo";
+  const URL_ARTIST_INFO = "/ArtistInfo/"
+
+  //constants for strings
+  const NOT_FOUND_ARTIST = "Not Found Artist";
+
+
   // Utiliza useCallback para memorizar las funciones y evitar re-creaciones innecesarias
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -25,11 +37,10 @@ export function AlbumCard({
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
   }, []);
-  const hoverClass = `${
-    isHovered
+  const hoverClass = `${isHovered
       ? " block transition delay-150 duration-300 ease-in-out scale-110"
       : "opacity-0"
-  }`;
+    }`;
 
   const addAlbumClick = () => {
     setIsAddedLikeAlbum(true);
@@ -39,21 +50,52 @@ export function AlbumCard({
     setIsAddedLikeAlbum(false);
     onRemoveLikedAlbum(album);
   };
+  const descriptionArtists = album.artists.map(function (artist, index) {
+    if (index === album.artists.length - 1) {
+      return <Link key={index} href={URL_ARTIST_INFO + artist.artist.artistId}><span className="hover:underline cursor-pointer text-sub" key={index}>{artist.artist.name}</span></Link>;
+    } else {
+      return (
+        <React.Fragment key={index}>
+          <Link key={index} href={URL_ARTIST_INFO + artist.artist.artistId}>
+            <span key={index} className="hover:underline cursor-pointer text-sub">{artist.artist.name}, </span>
+          </Link>
+        </React.Fragment>
+      );
+    }
+
+  });
   return (
     <div
       key={album.albumId}
       className="rounded bg-principal flex flex-col gap-4 p-4"
     >
       <div
-        className="rounded relative w-full pb-bottom-full"
+        className="rounded relative w-full pb-bottom-full cursor-pointer h-full"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <img
-          className="rounded w-full absolute"
-          src={"data:image/png;base64,"+album.imgAlbum}
-          alt="photo of band"
-        />
+        {album.imgAlbum !== undefined ? (
+          <Link href={`${URL_ALBUM_INFO}/${album.albumId}`}>
+            <Image
+              src={"data:image/png;base64," + album.imgAlbum}
+              priority={true}
+              alt={"photo by " + album.name + " by" + descriptionArtists}
+              width={100}
+              height={100}
+              className="rounded w-full absolute  h-full"
+            />
+          </Link>
+        ) : (
+          <Link href={`${URL_ALBUM_INFO}/${album.albumId}`}>
+            <Image
+              src={notFound}
+              priority={true}
+              alt={"photo by " + album.name + " by" + descriptionArtists}
+              className="rounded w-full absolute"
+            />
+          </Link>
+        )}
+
         {!isAddedLikeAlbum ? (
           <AddAlbumIcon
             key={"addAlbum-" + album.albumId}
@@ -78,13 +120,13 @@ export function AlbumCard({
         )}
       </div>
       <div className="flex flex-col">
-        <h3 className="font-semibold whitespace-nowrap text-ellipsis overflow-hidden ">
+        <h3 className="font-bold whitespace-nowrap text-ellipsis overflow-hidden font">
           {album.name}
         </h3>
-        <span>
-          {album.artists.map(function (artist, index) {
-            return artist.name + " ";
-          })}
+        <span key={album.albumId} className="gap-1 text-ellipsis overflow-hidden whitespace-nowrap w-full ">
+          {album.artists.length > 0
+            ? descriptionArtists
+            : NOT_FOUND_ARTIST}
         </span>
       </div>
     </div>

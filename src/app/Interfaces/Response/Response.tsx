@@ -1,7 +1,12 @@
  import {Album} from "./../AlbumInterface";
+ import { Pageable } from "./pageable";
 
  interface ResponseDataAlbums{
-    albums:Album[];
+    albums:Album[],
+    pageable:Pageable,
+    elementsByPage:number,
+    totalElements:number,
+    totalPages:number
  }
 export interface ResponseData {
     data?: ResponseDataAlbums; 

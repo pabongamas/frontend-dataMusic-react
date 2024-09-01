@@ -16,7 +16,8 @@ const config: Config = {
       colors:{
         "principal":"#191414",
         "like":"#1DB954",
-        "liked":"#191414"
+        "liked":"#191414",
+        "sub":"#b3b3b3"
       },
       padding: {
         'bottom-full': '100%',
