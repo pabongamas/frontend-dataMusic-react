@@ -58,6 +58,7 @@ export default function ({
             elementsByPage={responseData.data.elementsByPage}
             totalPages={responseData.data.totalPages}
             url="/"
+            pageForApi={pageForApi}
           ></Pagination>
         </div>
       );
