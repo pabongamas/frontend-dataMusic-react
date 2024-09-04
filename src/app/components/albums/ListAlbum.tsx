@@ -42,11 +42,14 @@ export default function ({
   onAddLikedAlbum,
   onRemoveLikedAlbum,
   pageForApi,
+  likedAlbumsStorage
 }: {
   onAddLikedAlbum: Function;
   onRemoveLikedAlbum: Function;
-  pageForApi:number
+  pageForApi:number,
+  likedAlbumsStorage:Album[]
 }) {
+  console.log(likedAlbumsStorage);
   const responseData = albumList(pageForApi);
   const paginationData = () => {
     if (responseData.data?.albums !== undefined) {
@@ -75,6 +78,7 @@ export default function ({
                 onRemoveLikedAlbum={onRemoveLikedAlbum}
                 key={album.albumId}
                 album={album}
+                isAlreadyLiked={(likedAlbumsStorage.filter(albumLiked=>albumLiked.albumId===album.albumId).length>0)}
               />
             </div>
           );

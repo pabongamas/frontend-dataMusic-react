@@ -7,15 +7,18 @@ import { RemoveAlbumIcon } from "./../../components/Icons/RemoveAlbum";
 import { Album } from "./../../Interfaces/AlbumInterface";
 import { AddAlbumIcon } from "./../Icons/AddAlbum";
 import { NOTFOUND } from "dns";
+import { Console } from "console";
 
 export function AlbumCard({
   album,
   onAddLikedAlbum,
   onRemoveLikedAlbum,
+  isAlreadyLiked
 }: {
   album: Album;
   onAddLikedAlbum: Function;
   onRemoveLikedAlbum: Function;
+  isAlreadyLiked:boolean
 }) {
   // Estado para controlar si el mouse está sobre el componente
   const [isHovered, setIsHovered] = useState(false);
@@ -96,7 +99,7 @@ export function AlbumCard({
           </Link>
         )}
 
-        {!isAddedLikeAlbum ? (
+        {!isAddedLikeAlbum && !isAlreadyLiked ? (
           <AddAlbumIcon
             key={"addAlbum-" + album.albumId}
             className={
@@ -111,7 +114,7 @@ export function AlbumCard({
           <RemoveAlbumIcon
             key={"addAlbum-" + album.albumId}
             className={
-              " block transition delay-150 duration-300 ease-in-out scale-110 absolute bottom-3 right-3 rounded-full p-2 bg-liked text-like cursor-pointer stroke-2  "
+              " block transition delay-150 duration-300 ease-in-out scale-110 absolute bottom-3 right-3 rounded-full p-2 bg-liked text-like cursor-pointer stroke-2 xd  "
             }
             width={"30"}
             height={"30"}
