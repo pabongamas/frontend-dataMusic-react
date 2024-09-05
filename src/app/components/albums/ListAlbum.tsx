@@ -49,12 +49,11 @@ export default function ({
   pageForApi:number,
   likedAlbumsStorage:Album[]
 }) {
-  console.log(likedAlbumsStorage);
   const responseData = albumList(pageForApi);
   const paginationData = () => {
     if (responseData.data?.albums !== undefined) {
       return (
-        <div className="flex-col items-center justify-center grid ">
+        <div className="flex-col items-center justify-center grid pb-5">
           <Pagination
             totalElements={responseData.data.totalElements}
             pageable={responseData.data.pageable}
