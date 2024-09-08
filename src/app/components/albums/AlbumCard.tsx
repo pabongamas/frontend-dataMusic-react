@@ -8,6 +8,7 @@ import { Album } from "./../../Interfaces/AlbumInterface";
 import { AddAlbumIcon } from "./../Icons/AddAlbum";
 import { NOTFOUND } from "dns";
 import { Console } from "console";
+import { usePathname } from 'next/navigation'
 
 export function AlbumCard({
   album,
@@ -20,13 +21,15 @@ export function AlbumCard({
   onRemoveLikedAlbum: Function;
   isAlreadyLiked:boolean
 }) {
+  const currentPath =usePathname();
+ 
   // Estado para controlar si el mouse está sobre el componente
   const [isHovered, setIsHovered] = useState(false);
   const [isAddedLikeAlbum, setIsAddedLikeAlbum] = useState(false);
 
   // constants for the routes
-  const URL_ALBUM_INFO = "/AlbumInfo";
-  const URL_ARTIST_INFO = "/ArtistInfo/"
+  const URL_ALBUM_INFO = currentPath+"/AlbumInfo";
+  const URL_ARTIST_INFO = currentPath+"/ArtistInfo/"
 
   //constants for strings
   const NOT_FOUND_ARTIST = "Not Found Artist";

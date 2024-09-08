@@ -2,6 +2,7 @@
 import { Album } from "@/app/Interfaces/AlbumInterface";
 import { AddAlbumProps } from "@/app/Interfaces/AddAlbumProps";
 import { useState } from "react";
+import { useLikedAlbumsContext } from "../../Hooks/LikedAlbumsContext";
 
 
 
@@ -31,8 +32,9 @@ function AddAlbumIcon({ className, width, height,addOrRemoveAlbumLike }: AddAlbu
   );
 }
 
-function LikedAlbums({ className, width, height, showText,likedAlbums }: AddAlbumProps) {
+function LikedAlbums({ className, width, height, showText }: AddAlbumProps) {
   const countLikedAlbums = () => {
+    const {likedAlbums}=useLikedAlbumsContext();
     return <span className="">{likedAlbums?.length}</span>;
   };
   return (

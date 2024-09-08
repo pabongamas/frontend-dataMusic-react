@@ -2,12 +2,7 @@ import { Album } from "@/app/Interfaces/AlbumInterface";
 import { LikedAlbums } from "../Icons/AddAlbum";
 // import {useLocalStorage} from "../../useStateFunctions/UseLocalStorage"
 // const [likedAlbums, saveLikedAlbums] = useLocalStorage('LIKED_ALBUMS',[]);
-
-export default function NavBar({
-  likedAlbums,
-}: {
-  likedAlbums: Album[];
-}) {
+ function NavBar() {
   return (
     <header className="w-full h-16 sticky top-0 flex  items-center z-10 bg-principal">
       <nav className="w-full p-4 flex">
@@ -19,10 +14,12 @@ export default function NavBar({
             width="30"
             height="30"
             showText={true}
-            likedAlbums={likedAlbums}
+            // likedAlbums={likedAlbums}
           />
         </div>
       </nav>
     </header>
   );
 }
+
+export default NavBar;

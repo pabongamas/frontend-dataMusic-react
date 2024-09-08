@@ -3,7 +3,7 @@ import { Album } from "./../../Interfaces/AlbumInterface";
 import { AlbumCard } from "./AlbumCard";
 import { ResponseData } from "./../../Interfaces/Response/Response";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Pagination } from "../../components/utilities/pagination";
 // import {useLocalStorage} from "./../../useStateFunctions/UseLocalStorage";
 
@@ -29,7 +29,6 @@ const albumList = (pageForApi:number) => {
       )
       .then((response) => {
         setResponseData(response.data);
-        // console.log(likedAlbums);
       })
       .catch((error) => {
         console.error(error);
@@ -59,7 +58,7 @@ export default function ({
             pageable={responseData.data.pageable}
             elementsByPage={responseData.data.elementsByPage}
             totalPages={responseData.data.totalPages}
-            url="/"
+            url="/main"
             pageForApi={pageForApi}
           ></Pagination>
         </div>
@@ -86,4 +85,9 @@ export default function ({
       {paginationData()}
     </>
   );
+}
+
+
+function Loading() {
+  return <h1>🌀 Loading...</h1>;
 }
