@@ -1,5 +1,11 @@
  import {Album} from "./../AlbumInterface";
+ import {Artist} from './../ArtistInterface'
  import { Pageable } from "./pageable";
+
+ interface Gender{
+   genderId:number;
+   name:string;
+ }
 
  interface ResponseDataAlbums{
     albums:Album[],
@@ -8,9 +14,33 @@
     totalElements:number,
     totalPages:number
  }
+ export interface Colors{
+  frecuencia:number,
+  colorHex:string
+ }
+ export interface Songs{
+  songId:number,
+  name:string,
+  duration:number,
+  numberSong:number,
+  explicit:boolean
+ }
+ interface ResponseAlbum{
+   album:Album,
+   artists:Artist,
+   gender:Gender
+   colors:Colors[];
+   songs:Songs[];
+ }
 export interface ResponseData {
     data?: ResponseDataAlbums; 
     date?:string;
     message?:string;
     state?:string;
   }
+export interface ResponseDataAlbum{
+   data?:ResponseAlbum;
+   date?:string;
+   message?:string;
+   state?:string;
+}

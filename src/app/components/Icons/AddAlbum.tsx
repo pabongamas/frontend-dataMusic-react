@@ -9,7 +9,7 @@ import { useLikedAlbumsContext } from "../../Hooks/LikedAlbumsContext";
 function AddAlbumIcon({ className, width, height,addOrRemoveAlbumLike }: AddAlbumProps) {
   return (
     <>
-      <div className={className ? " " + className : ""}>
+      <div title="Add to liked Songs" className={className ? " " + className : ""}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width={width}

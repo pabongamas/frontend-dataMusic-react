@@ -1,7 +1,11 @@
 import {Artist} from './ArtistInterface'
 
-interface APIResponseItem {
+export interface APIResponseItem {
   artist: Artist;
+}
+interface Gender{
+  genderId:number;
+  name:string;
 }
 export interface Album {
     albumId:string;
@@ -10,5 +14,7 @@ export interface Album {
     artists: APIResponseItem[];
     isAddedLike?:boolean;
     imgAlbum?:string
+    gender?:Gender;
+    year?:string;
   }
   

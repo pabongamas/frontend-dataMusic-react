@@ -7,7 +7,7 @@ import { useState } from "react";
 function RemoveAlbumIcon({ className, width, height,addOrRemoveAlbumLike}: AddAlbumProps) {
     return (
       <>
-        <div className={className ? " " + className : ""}>
+        <div title="You liked!"  className={className ? " " + className : ""}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={width}

@@ -7,12 +7,12 @@ import { Suspense, useEffect, useState } from "react";
 import { Pagination } from "../../components/utilities/pagination";
 // import {useLocalStorage} from "./../../useStateFunctions/UseLocalStorage";
 
-const albumList = (pageForApi:number) => {
+const albumList = (pageForApi: number) => {
   const [responseData, setResponseData] = useState<ResponseData>({});
   // const [likedAlbums, saveLikedAlbums] = useLocalStorage('LIKED_ALBUMS',[]);
 
   const jwtToken =
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbWFpbHNpdG9AZ21haWwuY29tIiwiaXNzIjoiZGF0YU11c2ljIiwiZXhwIjoxNzI2NDY5NzA5LCJpYXQiOjE3MjUxNzM3MDl9.ixZo0lZPF8CQgcCr9L-C1QFln2nF_xT_oGfQtr0ToEE";
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbWFpbHNpdG9AZ21haWwuY29tIiwiaXNzIjoiZGF0YU11c2ljIiwiZXhwIjoxNzI3ODc0NTUyLCJpYXQiOjE3MjY1Nzg1NTJ9.lgZ_yIDi5HtZQ5Gik8WYcFhZRdat2YPqPLoCGJEQzwc";
   // Configuración de Axios con el JWT en la cabecera
   const axiosConfig = {
     headers: {
@@ -24,7 +24,9 @@ const albumList = (pageForApi:number) => {
   useEffect(() => {
     axios
       .get(
-        "http://localhost:8090/datamusic/api/albums/?page="+pageForApi+"&elements=10",
+        "http://localhost:8090/datamusic/api/albums/?page=" +
+          pageForApi +
+          "&elements=10",
         axiosConfig
       )
       .then((response) => {
@@ -41,12 +43,12 @@ export default function ({
   onAddLikedAlbum,
   onRemoveLikedAlbum,
   pageForApi,
-  likedAlbumsStorage
+  likedAlbumsStorage,
 }: {
   onAddLikedAlbum: Function;
   onRemoveLikedAlbum: Function;
-  pageForApi:number,
-  likedAlbumsStorage:Album[]
+  pageForApi: number;
+  likedAlbumsStorage: Album[];
 }) {
   const responseData = albumList(pageForApi);
   const paginationData = () => {
@@ -72,11 +74,16 @@ export default function ({
           return (
             <div className="" key={"divAlbumCard_" + album.albumId}>
               <AlbumCard
+                isCard={true}
                 onAddLikedAlbum={onAddLikedAlbum}
                 onRemoveLikedAlbum={onRemoveLikedAlbum}
                 key={album.albumId}
                 album={album}
-                isAlreadyLiked={(likedAlbumsStorage.filter(albumLiked=>albumLiked.albumId===album.albumId).length>0)}
+                isAlreadyLiked={
+                  likedAlbumsStorage.filter(
+                    (albumLiked) => albumLiked.albumId === album.albumId
+                  ).length > 0
+                }
               />
             </div>
           );
@@ -85,9 +92,4 @@ export default function ({
       {paginationData()}
     </>
   );
-}
-
-
-function Loading() {
-  return <h1>🌀 Loading...</h1>;
 }

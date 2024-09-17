@@ -2,6 +2,8 @@
 import { useSearchParams } from "next/navigation";
 import { useLikedAlbumsContext } from "../Hooks/LikedAlbumsContext";
 import ListAlbum from "../components/albums/ListAlbum";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 function ListAlbums() {
   const { likedAlbums, addLikedAlbum, removeLikedAlbum } = useLikedAlbumsContext();
@@ -11,7 +13,7 @@ function ListAlbums() {
   const pageForApi = currentPage - 1;
 
   return (
-    <ListAlbum
+      <ListAlbum
       onAddLikedAlbum={addLikedAlbum}
       onRemoveLikedAlbum={removeLikedAlbum}
       pageForApi={pageForApi}

@@ -17,7 +17,9 @@ const config: Config = {
         "principal":"#191414",
         "like":"#1DB954",
         "liked":"#191414",
-        "sub":"#b3b3b3"
+        "sub":"#b3b3b3",
+        "rowList":"#121212",
+        "rowListH":"#2A2A2A"
       },
       padding: {
         'bottom-full': '100%',

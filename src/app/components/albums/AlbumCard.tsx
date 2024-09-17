@@ -14,12 +14,14 @@ export function AlbumCard({
   album,
   onAddLikedAlbum,
   onRemoveLikedAlbum,
-  isAlreadyLiked
+  isAlreadyLiked,
+  isCard
 }: {
   album: Album;
   onAddLikedAlbum: Function;
   onRemoveLikedAlbum: Function;
-  isAlreadyLiked:boolean
+  isAlreadyLiked:boolean,
+  isCard:boolean;
 }) {
   const currentPath =usePathname();
  
@@ -70,6 +72,55 @@ export function AlbumCard({
     }
 
   });
+  if(!isCard){
+    return (
+      <div
+      className="rounded relative w-full pb-bottom-full  h-full"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {album.imgAlbum !== undefined ? (
+          <Image
+            src={"data:image/png;base64," + album.imgAlbum}
+            priority={true}
+            alt={"photo by " + album.name + " by" + descriptionArtists}
+            width={100}
+            height={100}
+            className="rounded w-full absolute  h-full"
+          />
+      ) : (
+          <Image
+            src={notFound}
+            priority={true}
+            alt={"photo by " + album.name + " by" + descriptionArtists}
+            className="rounded w-full absolute"
+          />
+      )}
+       {!isAddedLikeAlbum && !isAlreadyLiked ? (
+          <AddAlbumIcon
+            key={"addAlbum-" + album.albumId}
+            className={
+              "absolute bottom-3 right-3 rounded-full p-2 bg-like text-principal cursor-pointer stroke-2" +
+              hoverClass
+            }
+            width={"30"}
+            height={"30"}
+            addOrRemoveAlbumLike={addAlbumClick}
+          />
+        ) : (
+          <RemoveAlbumIcon
+            key={"addAlbum-" + album.albumId}
+            className={
+              " block transition delay-150 duration-300 ease-in-out scale-110 absolute bottom-3 right-3 rounded-full p-2 bg-liked text-like cursor-pointer stroke-2 xd  "
+            }
+            width={"30"}
+            height={"30"}
+            addOrRemoveAlbumLike={removeAlbumClick}
+          />
+        )}
+      </div>
+    );
+  }
   return (
     <div
       key={album.albumId}
