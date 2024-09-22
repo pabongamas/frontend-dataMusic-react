@@ -23,7 +23,8 @@
   name:string,
   duration:number,
   numberSong:number,
-  explicit:boolean
+  explicit:boolean,
+  isLikedByCurrentUser?:boolean
  }
  interface ResponseAlbum{
    album:Album,
