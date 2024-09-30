@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { PlayIcon, PauseIcon, HeartIcon } from "lucide-react";
 import { APIResponseItem } from "@/app/Interfaces/AlbumInterface";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function CardSong({
   isEven,
@@ -15,11 +16,59 @@ export default function CardSong({
   song: Songs;
   artists: APIResponseItem[] | undefined;
 }) {
+  const jwtToken =
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbWFpbHNpdG9AZ21haWwuY29tIiwiaXNzIjoiZGF0YU11c2ljIiwiZXhwIjoxNzI3ODc0NTUyLCJpYXQiOjE3MjY1Nzg1NTJ9.lgZ_yIDi5HtZQ5Gik8WYcFhZRdat2YPqPLoCGJEQzwc";
+  // Configuración de Axios con el JWT en la cabecera
   const URL_ARTIST_INFO = "/main/ArtistInfo/";
   const [isHovered, setIsHovered] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLiked, setIsLiked] = useState(song.isLikedByCurrentUser);
-  
+
+  async function actionLikedSong(song: Songs) {
+    if (!isLiked) {
+      // Configuración de Axios con el JWT en la cabecera
+      const axiosConfig: RequestInit = {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`, // Aquí añadimos el JWT en la cabecera Authorization
+        },
+        cache: "no-cache",
+      };
+      const resSongLiked = await fetch(
+        "http://localhost:8090/datamusic/api/songUser/like/" + song.songId,
+        axiosConfig
+      );
+      const response = await resSongLiked.json();
+      if (response.state) {
+        toast.success("Added to Liked Songs");
+      } else {
+        toast.error(response.message);
+        return false;
+      }
+    } else {
+      // Configuración de Axios con el JWT en la cabecera
+      const axiosConfig: RequestInit = {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`, // Aquí añadimos el JWT en la cabecera Authorization
+        },
+        cache: "no-cache",
+      };
+      const resSongDisLiked = await fetch(
+        "http://localhost:8090/datamusic/api/songUser/like/" + song.songId,
+        axiosConfig
+      );
+      const response = await resSongDisLiked.json();
+      if (response.state) {
+        toast.success("Removed from Liked Songs");
+      } else {
+        toast.error(response.message);
+        return false;
+      }
+    }
+    setIsLiked(!isLiked);
+  }
+
   useEffect(() => {
     setIsLiked(song.isLikedByCurrentUser); // Actualiza el estado si el prop cambia
   }, [song.isLikedByCurrentUser]);
@@ -71,13 +120,18 @@ export default function CardSong({
         </div>
       </div>
       <div className="flex items-center space-x-4">
-        <button title={`${isLiked?"You liked!":"Add to Liked Songs"}`}
-          onClick={() => setIsLiked(!isLiked)}
+        <button
+          title={`${isLiked ? "You liked!" : "Add to Liked Songs"}`}
+          onClick={() => {
+            actionLikedSong(song);
+          }}
           className={` group-hover:opacity-100 transition-opacity duration-200 ${
-            isLiked ? "text-green-500 " : "text-white hover:text-green-400 opacity-0"
+            isLiked
+              ? "text-green-500 "
+              : "text-white hover:text-green-400 opacity-0"
           }`}
         >
-          <HeartIcon size={16} fill={isLiked  ? "currentColor" : "none"} />
+          <HeartIcon size={16} fill={isLiked ? "currentColor" : "none"} />
         </button>
         <span className="text-sm text-gray-400 w-12 text-right">
           {calcSecs(song.duration)}
@@ -87,9 +141,9 @@ export default function CardSong({
   );
 }
 
-function calcSecs(secs:number){
-    const minutes = Math.floor(secs / 60);
-    const remainingSeconds = secs % 60;
-    // Asegurarse de que los segundos siempre tengan dos dígitos
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  }
+function calcSecs(secs: number) {
+  const minutes = Math.floor(secs / 60);
+  const remainingSeconds = secs % 60;
+  // Asegurarse de que los segundos siempre tengan dos dígitos
+  return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+}
