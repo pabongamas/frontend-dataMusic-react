@@ -2,6 +2,20 @@
  import {Artist} from './../ArtistInterface'
  import { Pageable } from "./pageable";
 
+interface errorResponse{
+  error:string
+}
+interface AdditionalData {
+  [key: string]: any;
+}
+
+ export interface DefaultResponse{
+  date:string,
+  data?:AdditionalData,
+  errors:errorResponse,
+  message:string,
+  state:boolean
+ }
  interface Gender{
    genderId:number;
    name:string;
@@ -34,7 +48,7 @@
    songs:Songs[];
  }
 export interface ResponseData {
-    data?: ResponseDataAlbums; 
+    data: ResponseDataAlbums; 
     date?:string;
     message?:string;
     state?:string;

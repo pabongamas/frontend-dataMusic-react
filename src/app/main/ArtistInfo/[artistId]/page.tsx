@@ -3,6 +3,7 @@ import { useLocalStorage } from "@/app/Hooks/UseLocalStorage";
 import { useEffect, useState } from "react";
 import { Album } from "@/app/Interfaces/AlbumInterface";
 import axios from "axios";
+import Cookies from 'js-cookie';
 const page = ({
   params,
 }: {
@@ -10,8 +11,7 @@ const page = ({
     artistId: string;
   };
 }) => {
-  const jwtToken =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbWFpbHNpdG9AZ21haWwuY29tIiwiaXNzIjoiZGF0YU11c2ljIiwiZXhwIjoxNzI3ODc0NTUyLCJpYXQiOjE3MjY1Nzg1NTJ9.lgZ_yIDi5HtZQ5Gik8WYcFhZRdat2YPqPLoCGJEQzwc";
+  const jwtToken = Cookies.get('jwtTokenDataMusic');
 // Configuración de Axios con el JWT en la cabecera
 const axiosConfig = {
   headers: {

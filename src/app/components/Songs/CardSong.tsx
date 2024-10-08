@@ -6,6 +6,8 @@ import { PlayIcon, PauseIcon, HeartIcon } from "lucide-react";
 import { APIResponseItem } from "@/app/Interfaces/AlbumInterface";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import Cookies from 'js-cookie';
+
 
 export default function CardSong({
   isEven,
@@ -16,8 +18,7 @@ export default function CardSong({
   song: Songs;
   artists: APIResponseItem[] | undefined;
 }) {
-  const jwtToken =
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbWFpbHNpdG9AZ21haWwuY29tIiwiaXNzIjoiZGF0YU11c2ljIiwiZXhwIjoxNzI3ODc0NTUyLCJpYXQiOjE3MjY1Nzg1NTJ9.lgZ_yIDi5HtZQ5Gik8WYcFhZRdat2YPqPLoCGJEQzwc";
+  const jwtToken = Cookies.get('jwtTokenDataMusic');
   // Configuración de Axios con el JWT en la cabecera
   const URL_ARTIST_INFO = "/main/ArtistInfo/";
   const [isHovered, setIsHovered] = useState(false);

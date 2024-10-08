@@ -5,19 +5,20 @@ import React from "react";
 import { useLikedAlbumsContext } from "@/app/Hooks/LikedAlbumsContext";
 
 export function ImgAlbumWithContext({ album }: { album: Album }) {
-  const { likedAlbums, addLikedAlbum, removeLikedAlbum } =
-    useLikedAlbumsContext();
+  // const { likedAlbums, addLikedAlbum, removeLikedAlbum } =
+  //   useLikedAlbumsContext();
+  
   return (
     <AlbumCard
       isCard={false}
-      onAddLikedAlbum={addLikedAlbum}
-      onRemoveLikedAlbum={removeLikedAlbum}
+      // onAddLikedAlbum={addLikedAlbum}
+      // onRemoveLikedAlbum={removeLikedAlbum}
       key={album.albumId}
       album={album}
-      isAlreadyLiked={
-        likedAlbums.filter((albumLiked) => albumLiked.albumId === album.albumId)
-          .length > 0
-      }
+      // isAlreadyLiked={
+      //   likedAlbums.filter((albumLiked) => albumLiked.albumId === album.albumId)
+      //     .length > 0
+      // }
     />
-  );
+  )
 }

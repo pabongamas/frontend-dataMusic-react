@@ -14,6 +14,8 @@ import ListSong from "@/app/components/Songs/ListSong";
 import notFound from "../../../../../public/img/notFound.png";
 import { AlbumCard } from "@/app/components/albums/AlbumCard";
 import {ImgAlbumWithContext} from "./imgAlbum";
+import Cookies from 'js-cookie';
+import { cookies } from 'next/headers';
 // import { useLikedAlbumsContext } from "@/app/Hooks/LikedAlbumsContext";
 
 export default async function albumDetail({
@@ -26,8 +28,9 @@ export default async function albumDetail({
   // const { likedAlbums, addLikedAlbum, removeLikedAlbum } = useLikedAlbumsContext();
   const URL_ARTIST_INFO = "/main/ArtistInfo/";
   // const [responseDataAlbum, setResponseDataAlbum] = useState<ResponseDataAlbum>({});
-  const jwtToken =
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbWFpbHNpdG9AZ21haWwuY29tIiwiaXNzIjoiZGF0YU11c2ljIiwiZXhwIjoxNzI3ODc0NTUyLCJpYXQiOjE3MjY1Nzg1NTJ9.lgZ_yIDi5HtZQ5Gik8WYcFhZRdat2YPqPLoCGJEQzwc";
+  // const jwtToken = Cookies.get('jwtTokenDataMusic');
+  const cookieStore = cookies();
+  const jwtToken = cookieStore.get('jwtTokenDataMusic')?.value;
   // Configuración de Axios con el JWT en la cabecera
   const axiosConfig:RequestInit  = {
     headers: {
@@ -62,6 +65,7 @@ export default async function albumDetail({
   let colorsAlbum: Colors[];
   var listSongs: Songs[] = [];
   let gradientClasses;
+
   if (resAlbum.ok) {
     const jsonDat: ResponseDataAlbum = await resAlbum.json();
     if (jsonDat.data?.album) {
