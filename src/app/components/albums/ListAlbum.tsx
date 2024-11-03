@@ -125,7 +125,7 @@ export default function ({
   //           totalPages={responseData.data.totalPages}
   //           url="/main"
   //           pageForApi={pageForApi}
-  //         ></Pagination>
+  //         ></Pagination>/
   //       </div>
   //     );
   //   }

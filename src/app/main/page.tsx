@@ -16,14 +16,8 @@ async function ListAlbums({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  // const { likedAlbums, addLikedAlbum, removeLikedAlbum } = useLikedAlbumsContext();
-  // const searchParams = useSearchParams();
   const page =searchParams!==undefined? searchParams.page:1;
-  // console.log(page);
   const currentPage = page ? parseInt(handleParamsUrl(page), 10) : 1;
-  // console.log(searchParams);
-  // const currentPage = 1;
-
   const pageForApi = currentPage - 1;
 
 
@@ -50,12 +44,6 @@ async function ListAlbums({
   }
 
   return (
-    //   <ListAlbum
-    //   onAddLikedAlbum={addLikedAlbum}
-    //   onRemoveLikedAlbum={removeLikedAlbum}
-    //   pageForApi={pageForApi}
-    //   likedAlbumsStorage={likedAlbums}
-    // />
     <ListAlbum pageForApi={pageForApi} dataResponse={variableGetDataAlbums}/>
   );
 }

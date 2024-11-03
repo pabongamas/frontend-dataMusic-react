@@ -7,6 +7,8 @@ import { APIResponseItem } from "@/app/Interfaces/AlbumInterface";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import Cookies from 'js-cookie';
+import Player from "../audioPlayer/player";
+import { useAudioPlayerContext } from './../../Hooks/usePlayerContext';
 
 
 export default function CardSong({
@@ -24,6 +26,9 @@ export default function CardSong({
   const [isHovered, setIsHovered] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLiked, setIsLiked] = useState(song.isLikedByCurrentUser);
+
+  //context for handle to play songs
+  const { playAudio,stopAudio,setCurrentSong } = useAudioPlayerContext();
 
   async function actionLikedSong(song: Songs) {
     if (!isLiked) {
@@ -73,6 +78,17 @@ export default function CardSong({
   useEffect(() => {
     setIsLiked(song.isLikedByCurrentUser); // Actualiza el estado si el prop cambia
   }, [song.isLikedByCurrentUser]);
+
+  function actionPlay(song:Songs){
+    setIsPlaying(!isPlaying);
+    if(!isPlaying){
+      setCurrentSong(song);
+      playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
+    }else{
+      stopAudio();
+    }
+  }
+  
   return (
     <div
       className={`flex items-center px-4 py-2  bg-rowList  hover:bg-rowListH  group`}
@@ -82,7 +98,7 @@ export default function CardSong({
       <div className="w-8 text-right mr-4">
         {isHovered ? (
           <button
-            onClick={() => setIsPlaying(!isPlaying)}
+            onClick={() =>actionPlay(song)}
             className="text-white hover:text-green-400 transition-colors duration-200"
           >
             {isPlaying ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
