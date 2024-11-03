@@ -46,6 +46,7 @@ interface AdditionalData {
    gender:Gender
    colors:Colors[];
    songs:Songs[];
+   routeThumb:string;
  }
 export interface ResponseData {
     data: ResponseDataAlbums; 

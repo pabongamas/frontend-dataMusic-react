@@ -11,6 +11,7 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import { Songs } from "../Interfaces/Response/Response";
+import { Album } from "../Interfaces/AlbumInterface";
 
 export interface AudioPlayerContextType {
   isPlaying: boolean;
@@ -20,6 +21,8 @@ export interface AudioPlayerContextType {
   audioRef: React.RefObject<HTMLAudioElement>;
   songCurrent: Songs | null;
   setCurrentSong: (song: Songs | null) => void;
+  setDataAlbumFn: (albumData:Album |undefined) => void;
+  dataAlbum:Album | undefined;
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
@@ -31,6 +34,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null); // Referencia para el elemento de audio
   const [songCurrent, setSongCurrent] = useState<Songs | null>(Object);
+  const [dataAlbum, setDataAlbum] = useState<Album | undefined>(Object);
+
 
   const playAudio = async (
     url?: string | undefined,
@@ -61,6 +66,9 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const setCurrentSong = (song: Songs | null) => {
     setSongCurrent(song);
   };
+  const setDataAlbumFn=(albumData:Album|undefined)=>{
+    setDataAlbum(albumData);
+  }
 
   return (
     <AudioPlayerContext.Provider
@@ -72,6 +80,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         audioRef,
         setCurrentSong,
         songCurrent,
+        setDataAlbumFn,
+        dataAlbum,
       }}
     >
       {children}

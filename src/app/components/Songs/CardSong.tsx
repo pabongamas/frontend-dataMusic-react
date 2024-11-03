@@ -3,7 +3,7 @@
 import { Songs } from "@/app/Interfaces/Response/Response";
 import { useEffect, useState } from "react";
 import { PlayIcon, PauseIcon, HeartIcon } from "lucide-react";
-import { APIResponseItem } from "@/app/Interfaces/AlbumInterface";
+import { Album, APIResponseItem } from "@/app/Interfaces/AlbumInterface";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import Cookies from 'js-cookie';
@@ -15,10 +15,12 @@ export default function CardSong({
   isEven,
   song,
   artists,
+  albumData
 }: {
   isEven: boolean;
   song: Songs;
   artists: APIResponseItem[] | undefined;
+  albumData: Album|undefined
 }) {
   const jwtToken = Cookies.get('jwtTokenDataMusic');
   // Configuración de Axios con el JWT en la cabecera
@@ -28,7 +30,7 @@ export default function CardSong({
   const [isLiked, setIsLiked] = useState(song.isLikedByCurrentUser);
 
   //context for handle to play songs
-  const { playAudio,stopAudio,setCurrentSong } = useAudioPlayerContext();
+  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn } = useAudioPlayerContext();
 
   async function actionLikedSong(song: Songs) {
     if (!isLiked) {
@@ -83,6 +85,7 @@ export default function CardSong({
     setIsPlaying(!isPlaying);
     if(!isPlaying){
       setCurrentSong(song);
+      setDataAlbumFn(albumData);
       playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
     }else{
       stopAudio();

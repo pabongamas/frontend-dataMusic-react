@@ -65,6 +65,7 @@ export default async function albumDetail({
   let colorsAlbum: Colors[];
   var listSongs: Songs[] = [];
   let gradientClasses;
+  let routeThumb:string;
 
   if (resAlbum.ok) {
     const jsonDat: ResponseDataAlbum = await resAlbum.json();
@@ -73,6 +74,8 @@ export default async function albumDetail({
       colorsAlbum = jsonDat.data.colors;
       gradientClasses = generateGradient(colorsAlbum);
       listSongs = jsonDat.data.songs;
+      routeThumb=jsonDat.data.routeThumb;
+      console.log(routeThumb);
     }
   } else {
     throw new Error(`Error: ${resAlbum.status} ${resAlbum.statusText}`);
@@ -146,6 +149,7 @@ export default async function albumDetail({
             <ListSong
               data={listSongs}
               artists={variableGetDataAlbum?.artists}
+              albumData={variableGetDataAlbum}
             />
           </div>
         )}

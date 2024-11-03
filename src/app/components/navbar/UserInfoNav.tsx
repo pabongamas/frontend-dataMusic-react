@@ -50,7 +50,7 @@ const UserInfoNav = () => {
             <p className="text-xs">{userData.email}</p>
           </div>
           <Link
-            href="/profile"
+            href="/main/profile"
             className="block px-4 py-2 text-sm hover:bg-rowListH"
           >
             <User className="inline-block mr-2 h-4 w-4" />

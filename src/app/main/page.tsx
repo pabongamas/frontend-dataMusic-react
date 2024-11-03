@@ -1,6 +1,3 @@
-// "use client"; // This is a client component 👈🏽
-// import { useSearchParams } from "next/navigation";
-// import { useLikedAlbumsContext } from "../Hooks/LikedAlbumsContext";
 import ListAlbum from "../components/albums/ListAlbum";
 import { Suspense } from "react";
 import Loading from "./loading";

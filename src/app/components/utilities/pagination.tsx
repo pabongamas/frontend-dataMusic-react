@@ -1,5 +1,7 @@
+"use client"
 import React from "react";
 import { Pageable } from "@/app/Interfaces/Response/pageable";
+import { useRouter,usePathname } from "next/navigation";
 
 
 //object of dinamyc pagination ,the parameter pageForApi is the actual page wich is searched in the browser 
@@ -22,6 +24,12 @@ export function Pagination({
     { length: totalPages },
     (_, index) => index + 1
   );
+  console.log(usePathname);
+  const router = useRouter();
+
+  const goToPage = (pageNumber: number) => {
+    router.push(`${url}?page=${pageNumber}`)
+  };
 //   is added the logic for control the pagination , is created a new array with the values of the length of number of pages
 // this is iterated for render every single page , is validates if each one is the page actual wich is searched 
 // is added styles and classes depending if the page is actual o other 
@@ -30,8 +38,9 @@ export function Pagination({
     return numbersOfPages.map((pageNumber) => (
       <li key={pageNumber}>
         <a
-          href={url + `?page=` + pageNumber}
-          className={`${
+          // href={url + `?page=` + pageNumber}
+          onClick={() => goToPage(pageNumber)}
+          className={`cursor-pointer ${
             pageNumber === pageable.pageNumber + 1
               ? "bg-like text-principa  hover:text-principal "
               : "bg-principal"
@@ -57,7 +66,8 @@ export function Pagination({
           {pageable.pageNumber !== 0 && (
             <li>
               <a
-                href={url + `?page=` + pageForApi}
+                // href={url + `?page=` + pageForApi}
+                onClick={() => goToPage(pageForApi)}
                 className=" bg-principal flex items-center justify-center px-4 h-10 ms-0 leading-tight border rounded-s-lg  border-gray-300  hover:text-like  dark:border-gray-700"
               >
                 Previous
@@ -68,7 +78,8 @@ export function Pagination({
           {totalPages !== pageForApi + 1 && (
             <li>
               <a
-                href={url + `?page=` + (pageForApi + 2)}
+                // href={url + `?page=` + (pageForApi + 2)}
+                onClick={() => goToPage(pageForApi+2)}
                 className=" bg-principal flex items-center justify-center px-4 h-10 leading-tight border  rounded-e-lg border-gray-300  hover:text-like  dark:border-gray-700"
               >
                 Next

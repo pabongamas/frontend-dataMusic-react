@@ -11,9 +11,11 @@ import {
   SkipBack,
   SkipForward,
 } from "lucide-react";
+import Link from "next/link";
 
 function AudioPlayer() {
-  const { isPlaying, playAudio, audioUrl, stopAudio, audioRef, songCurrent } =
+  const URL_ARTIST_INFO = "/main/ArtistInfo/";
+  const { isPlaying, playAudio, audioUrl, stopAudio, audioRef, songCurrent,dataAlbum } =
     useAudioPlayerContext();
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -82,7 +84,7 @@ function AudioPlayer() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <img
-            src={songCurrent?.name || "/placeholder.svg"}
+            src={"data:image/png;base64," + dataAlbum?.imgAlbum|| "/placeholder.svg"}
             alt="Album Art"
             className="w-14 h-14 rounded-md"
           />
@@ -90,9 +92,26 @@ function AudioPlayer() {
             <h3 className="font-semibold">
               {songCurrent?.name || "Unknown Track"}
             </h3>
-            <p className="text-sm text-zinc-400">
+            {/* <p className="text-sm text-zinc-400">
               {songCurrent?.name || "Unknown Artist"}
-            </p>
+            </p> */}
+            {dataAlbum?.artists !== undefined &&
+                    dataAlbum.artists.length > 0 &&
+                    dataAlbum.artists.map((artist, index) => (
+                      <Link
+                        key={artist.artist.artistId}
+                        href={URL_ARTIST_INFO + artist.artist.artistId}
+                        className="hover:underline cursor-pointer text-sub"
+                      >
+                        <span
+                          key={artist.artist.artistId}
+                          className="text-sm text-gray-300"
+                        >
+                          {index > 0 && ", "}
+                          {artist.artist.name}
+                        </span>
+                      </Link>
+                    ))}
           </div>
         </div>
         <div className="flex-1 max-w-xl mx-8">
