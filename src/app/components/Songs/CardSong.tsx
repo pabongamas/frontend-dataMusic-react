@@ -30,7 +30,8 @@ export default function CardSong({
   const [isLiked, setIsLiked] = useState(song.isLikedByCurrentUser);
 
   //context for handle to play songs
-  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn } = useAudioPlayerContext();
+  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn,songCurrent,audioRef } = useAudioPlayerContext();
+
 
   async function actionLikedSong(song: Songs) {
     if (!isLiked) {
@@ -84,11 +85,26 @@ export default function CardSong({
   function actionPlay(song:Songs){
     setIsPlaying(!isPlaying);
     if(!isPlaying){
-      setCurrentSong(song);
-      setDataAlbumFn(albumData);
-      playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
+      if(songCurrent?.songId!==song.songId){
+        setCurrentSong(song);
+        setDataAlbumFn(albumData);
+        playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
+      }else{
+        if(audioRef!==null){
+          playAudio(undefined, undefined);
+          audioRef.current?.play();
+          setIsPlaying(true);
+        }
+      }
     }else{
-      stopAudio();
+        stopAudio();
+        if(songCurrent?.songId!==song.songId){
+          setCurrentSong(song);
+          setDataAlbumFn(albumData);
+          setIsPlaying(true);
+          playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
+        }
+        
     }
   }
   
@@ -104,7 +120,7 @@ export default function CardSong({
             onClick={() =>actionPlay(song)}
             className="text-white hover:text-green-400 transition-colors duration-200"
           >
-            {isPlaying ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
+            {isPlaying &&(songCurrent?.songId==song.songId) ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
           </button>
         ) : (
           <span className="text-gray-400 group-hover:text-white">

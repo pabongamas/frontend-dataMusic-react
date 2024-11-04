@@ -55,7 +55,6 @@ function AudioPlayer() {
   };
 
   const handleSeek = (newTime: number) => {
-    console.log(newTime);
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
       setCurrentTime(newTime);
@@ -77,7 +76,6 @@ function AudioPlayer() {
       audioRef.current.play();
     }
   };
-  console.log(isPlaying);
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 text-white p-4 shadow-lg">
       <audio ref={audioRef} src={audioUrl} className="hidden" />
