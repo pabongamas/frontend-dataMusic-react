@@ -26,12 +26,23 @@ export default function CardSong({
   // Configuración de Axios con el JWT en la cabecera
   const URL_ARTIST_INFO = "/main/ArtistInfo/";
   const [isHovered, setIsHovered] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayingSong, setIsPlayingSong] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState(song.isLikedByCurrentUser);
 
   //context for handle to play songs
-  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn,songCurrent,audioRef } = useAudioPlayerContext();
+  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn,songCurrent,audioRef,isPlaying } = useAudioPlayerContext();
 
+
+  // if(songCurrent!==null){
+  //   if(song.songId==songCurrent.songId){
+  //     setIsPlayingSong(isPlaying);
+  //   }
+  // }
+  useEffect(() => {
+    if (songCurrent && song.songId === songCurrent.songId) {
+      setIsPlayingSong(isPlaying);
+    }
+  }, [songCurrent, isPlaying, song.songId]);
 
   async function actionLikedSong(song: Songs) {
     if (!isLiked) {
@@ -83,8 +94,8 @@ export default function CardSong({
   }, [song.isLikedByCurrentUser]);
 
   function actionPlay(song:Songs){
-    setIsPlaying(!isPlaying);
-    if(!isPlaying){
+    setIsPlayingSong(!isPlayingSong);
+    if(!isPlayingSong){
       if(songCurrent?.songId!==song.songId){
         setCurrentSong(song);
         setDataAlbumFn(albumData);
@@ -93,7 +104,7 @@ export default function CardSong({
         if(audioRef!==null){
           playAudio(undefined, undefined);
           audioRef.current?.play();
-          setIsPlaying(true);
+          setIsPlayingSong(true);
         }
       }
     }else{
@@ -101,10 +112,9 @@ export default function CardSong({
         if(songCurrent?.songId!==song.songId){
           setCurrentSong(song);
           setDataAlbumFn(albumData);
-          setIsPlaying(true);
+          setIsPlayingSong(true);
           playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
         }
-        
     }
   }
   
@@ -115,12 +125,12 @@ export default function CardSong({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="w-8 text-right mr-4">
-        {isHovered ? (
+        {isHovered || songCurrent!==null && songCurrent?.songId==song.songId   ? (
           <button
             onClick={() =>actionPlay(song)}
             className="text-white hover:text-green-400 transition-colors duration-200"
           >
-            {isPlaying &&(songCurrent?.songId==song.songId) ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
+            {isPlayingSong &&(songCurrent?.songId==song.songId) ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
           </button>
         ) : (
           <span className="text-gray-400 group-hover:text-white">
