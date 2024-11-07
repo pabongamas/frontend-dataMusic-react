@@ -15,12 +15,14 @@ export default function CardSong({
   isEven,
   song,
   artists,
-  albumData
+  albumData,
+  nextSong
 }: {
   isEven: boolean;
   song: Songs;
   artists: APIResponseItem[] | undefined;
-  albumData: Album|undefined
+  albumData: Album|undefined,
+  nextSong:Songs;
 }) {
   const jwtToken = Cookies.get('jwtTokenDataMusic');
   // Configuración de Axios con el JWT en la cabecera
@@ -30,7 +32,7 @@ export default function CardSong({
   const [isLiked, setIsLiked] = useState(song.isLikedByCurrentUser);
 
   //context for handle to play songs
-  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn,songCurrent,audioRef,isPlaying } = useAudioPlayerContext();
+  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn,songCurrent,audioRef,isPlaying,setNextSong } = useAudioPlayerContext();
 
 
   // if(songCurrent!==null){
@@ -95,6 +97,7 @@ export default function CardSong({
 
   function actionPlay(song:Songs){
     setIsPlayingSong(!isPlayingSong);
+    setNextSong(nextSong);
     if(!isPlayingSong){
       if(songCurrent?.songId!==song.songId){
         setCurrentSong(song);

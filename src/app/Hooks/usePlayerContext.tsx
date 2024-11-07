@@ -23,6 +23,8 @@ export interface AudioPlayerContextType {
   setCurrentSong: (song: Songs | null) => void;
   setDataAlbumFn: (albumData:Album |undefined) => void;
   dataAlbum:Album | undefined;
+  nextSong:Songs;
+  setNextSong:(song:Songs)=>void;
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
@@ -35,6 +37,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null); // Referencia para el elemento de audio
   const [songCurrent, setSongCurrent] = useState<Songs | null>(Object);
   const [dataAlbum, setDataAlbum] = useState<Album | undefined>(Object);
+  const [nextSong, setNextSong] = useState<Songs>(Object);
+
 
 
   const playAudio = async (
@@ -69,6 +73,9 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const setDataAlbumFn=(albumData:Album|undefined)=>{
     setDataAlbum(albumData);
   }
+  const setSongNext=(nextSong:Songs)=>{
+    setNextSong(nextSong);
+  }
 
   return (
     <AudioPlayerContext.Provider
@@ -82,6 +89,8 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         songCurrent,
         setDataAlbumFn,
         dataAlbum,
+        nextSong,
+        setNextSong
       }}
     >
       {children}

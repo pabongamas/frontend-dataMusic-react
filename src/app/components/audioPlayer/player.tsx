@@ -12,10 +12,12 @@ import {
   SkipForward,
 } from "lucide-react";
 import Link from "next/link";
+import Cookies from 'js-cookie';
 
 function AudioPlayer() {
+  const jwtToken = Cookies.get('jwtTokenDataMusic');
   const URL_ARTIST_INFO = "/main/ArtistInfo/";
-  const { isPlaying, playAudio, audioUrl, stopAudio, audioRef, songCurrent,dataAlbum } =
+  const { isPlaying, playAudio, audioUrl, stopAudio, audioRef, songCurrent,dataAlbum,nextSong,setCurrentSong } =
     useAudioPlayerContext();
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -76,6 +78,11 @@ function AudioPlayer() {
       audioRef.current.play();
     }
   };
+  const nextTrack=()=>{
+    setCurrentSong(nextSong);
+    playAudio(`http://localhost:8090/datamusic/api/songs/play/${nextSong.songId}`,jwtToken);
+    console.log(nextSong);
+  }
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 text-white p-4 shadow-lg">
       <audio ref={audioRef} src={audioUrl} className="hidden" />
@@ -90,9 +97,7 @@ function AudioPlayer() {
             <h3 className="font-semibold">
               {songCurrent?.name || "Unknown Track"}
             </h3>
-            {/* <p className="text-sm text-zinc-400">
-              {songCurrent?.name || "Unknown Artist"}
-            </p> */}
+         
             {dataAlbum?.artists !== undefined &&
                     dataAlbum.artists.length > 0 &&
                     dataAlbum.artists.map((artist, index) => (
@@ -131,7 +136,7 @@ function AudioPlayer() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => console.log("Next track")}
+              onClick={() =>nextTrack()}
             >
               <SkipForward className="h-5 w-5" />
             </Button>
