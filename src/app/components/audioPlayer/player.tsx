@@ -12,13 +12,23 @@ import {
   SkipForward,
 } from "lucide-react";
 import Link from "next/link";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 function AudioPlayer() {
-  const jwtToken = Cookies.get('jwtTokenDataMusic');
+  const jwtToken = Cookies.get("jwtTokenDataMusic");
   const URL_ARTIST_INFO = "/main/ArtistInfo/";
-  const { isPlaying, playAudio, audioUrl, stopAudio, audioRef, songCurrent,dataAlbum,nextSong,setCurrentSong } =
-    useAudioPlayerContext();
+  const {
+    isPlaying,
+    playAudio,
+    audioUrl,
+    stopAudio,
+    audioRef,
+    songCurrent,
+    dataAlbum,
+    nextSong,
+    setCurrentSong,
+    previousSong,
+  } = useAudioPlayerContext();
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -78,18 +88,34 @@ function AudioPlayer() {
       audioRef.current.play();
     }
   };
-  const nextTrack=()=>{
-    setCurrentSong(nextSong);
-    playAudio(`http://localhost:8090/datamusic/api/songs/play/${nextSong.songId}`,jwtToken);
-    console.log(nextSong);
-  }
+  const nextTrack = () => {
+    if(nextSong!==null){
+      setCurrentSong(nextSong);
+      playAudio(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/songs/play/${nextSong.songId}`,
+        jwtToken
+      );  
+    }
+  };
+  const previousTrack = () => {
+    if(previousSong!==null){
+      setCurrentSong(previousSong);
+      playAudio(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/songs/play/${previousSong.songId}`,
+        jwtToken
+      );
+    }
+  };
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 text-white p-4 shadow-lg">
       <audio ref={audioRef} src={audioUrl} className="hidden" />
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <img
-            src={"data:image/png;base64," + dataAlbum?.imgAlbum|| "/placeholder.svg"}
+            src={
+              "data:image/png;base64," + dataAlbum?.imgAlbum ||
+              "/placeholder.svg"
+            }
             alt="Album Art"
             className="w-14 h-14 rounded-md"
           />
@@ -97,33 +123,29 @@ function AudioPlayer() {
             <h3 className="font-semibold">
               {songCurrent?.name || "Unknown Track"}
             </h3>
-         
+
             {dataAlbum?.artists !== undefined &&
-                    dataAlbum.artists.length > 0 &&
-                    dataAlbum.artists.map((artist, index) => (
-                      <Link
-                        key={artist.artist.artistId}
-                        href={URL_ARTIST_INFO + artist.artist.artistId}
-                        className="hover:underline cursor-pointer text-sub"
-                      >
-                        <span
-                          key={artist.artist.artistId}
-                          className="text-sm text-gray-300"
-                        >
-                          {index > 0 && ", "}
-                          {artist.artist.name}
-                        </span>
-                      </Link>
-                    ))}
+              dataAlbum.artists.length > 0 &&
+              dataAlbum.artists.map((artist, index) => (
+                <Link
+                  key={artist.artist.artistId}
+                  href={URL_ARTIST_INFO + artist.artist.artistId}
+                  className="hover:underline cursor-pointer text-sub"
+                >
+                  <span
+                    key={artist.artist.artistId}
+                    className="text-sm text-gray-300"
+                  >
+                    {index > 0 && ", "}
+                    {artist.artist.name}
+                  </span>
+                </Link>
+              ))}
           </div>
         </div>
         <div className="flex-1 max-w-xl mx-8">
           <div className="flex items-center justify-center space-x-4 mb-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => console.log("Previous track")}
-            >
+            <Button variant="ghost" size="icon" onClick={() => previousTrack()}>
               <SkipBack className="h-5 w-5" />
             </Button>
             <Button variant="ghost" size="icon" onClick={togglePlay}>
@@ -133,11 +155,7 @@ function AudioPlayer() {
                 <Play className="h-6 w-6" />
               )}
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>nextTrack()}
-            >
+            <Button variant="ghost" size="icon" onClick={() => nextTrack()}>
               <SkipForward className="h-5 w-5" />
             </Button>
           </div>

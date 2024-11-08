@@ -27,7 +27,7 @@ async function ListAlbums({
     },
   };
   const resAlbum = await fetch(
-    "http://localhost:8090/datamusic/api/albums/?page=" +
+    process.env.NEXT_PUBLIC_BACKEND_API_URL+"/albums/?page=" +
           pageForApi +
           "&elements=10",
     axiosConfig

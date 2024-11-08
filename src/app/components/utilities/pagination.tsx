@@ -24,7 +24,6 @@ export function Pagination({
     { length: totalPages },
     (_, index) => index + 1
   );
-  console.log(usePathname);
   const router = useRouter();
 
   const goToPage = (pageNumber: number) => {

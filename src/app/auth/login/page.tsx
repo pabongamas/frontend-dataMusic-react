@@ -85,25 +85,6 @@ export default function SignIn() {
           }
         }
       });
-    // const response = await fetch(
-    //   `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/login`,
-    //   params
-    // );
-    // const dataResponse:DefaultResponse=await response.json();
-    // if(dataResponse.state){
-    //     if(dataResponse.data!==undefined){
-    //        const token =dataResponse.data.token;
-    //        if (token) {
-
-    //         // Guardar el JWT en una cookie con opciones seguras
-    //         toast.promise();
-    //         Cookies.set('jwtTokenDataMusic', token, { expires: 7, secure: true, sameSite: 'Strict', path: '/' });
-    //         router.push('/main');
-    //       }
-    //     }
-    // }else{
-    //    toast.error(dataResponse.errors.error)
-    // }
   };
 
   return (

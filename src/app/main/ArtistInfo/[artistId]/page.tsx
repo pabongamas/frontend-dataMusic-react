@@ -22,7 +22,7 @@ const axiosConfig = {
   useEffect(()=>{
     axios
     .get(
-      "http://localhost:8090/datamusic/api/artists/"+params.artistId,
+      process.env.NEXT_PUBLIC_BACKEND_API_URL+"/artists/"+params.artistId,
       axiosConfig
     )
     .then((response) => {

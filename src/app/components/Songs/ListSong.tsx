@@ -9,7 +9,7 @@ export default function  ListSong ({data,artists,albumData}:{data:Songs[],artist
         <>
         <div className='flex flex-col'>
         {data.map((song, index) => (
-                <CardSong nextSong={data[index+1]} albumData={albumData}  isEven={index%2===0} key={index} song={song} artists={artists} />
+                <CardSong nextSong={data[index+1]?data[index+1]:null} previousSong={data[index-1]?data[index-1]:null} albumData={albumData}  isEven={index%2===0} key={index} song={song} artists={artists} />
             ))}
         </div>
           

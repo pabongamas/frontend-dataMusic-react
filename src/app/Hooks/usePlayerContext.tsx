@@ -23,8 +23,10 @@ export interface AudioPlayerContextType {
   setCurrentSong: (song: Songs | null) => void;
   setDataAlbumFn: (albumData:Album |undefined) => void;
   dataAlbum:Album | undefined;
-  nextSong:Songs;
-  setNextSong:(song:Songs)=>void;
+  nextSong:Songs|null;
+  setNextSong:(song:Songs|null)=>void;
+  previousSong:Songs|null;
+  setPreviousSong:(song:Songs|null)=>void;
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
@@ -37,7 +39,9 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null); // Referencia para el elemento de audio
   const [songCurrent, setSongCurrent] = useState<Songs | null>(Object);
   const [dataAlbum, setDataAlbum] = useState<Album | undefined>(Object);
-  const [nextSong, setNextSong] = useState<Songs>(Object);
+  const [nextSong, setNextSong] = useState<Songs|null>(Object);
+  const [previousSong, setPreviousSong] = useState<Songs|null>(Object);
+
 
 
 
@@ -57,7 +61,10 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         setAudioUrl(blobUrl);
         setIsPlaying(true);
       } else {
-        toast.error("Error fetching audio");
+        setIsPlaying(false);
+        setCurrentSong(null)
+        setAudioUrl(null);
+        toast.error("Error fetching audio, this song is not available");
       }
     } else {
       setIsPlaying(true);
@@ -73,9 +80,6 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const setDataAlbumFn=(albumData:Album|undefined)=>{
     setDataAlbum(albumData);
   }
-  const setSongNext=(nextSong:Songs)=>{
-    setNextSong(nextSong);
-  }
 
   return (
     <AudioPlayerContext.Provider
@@ -90,7 +94,9 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
         setDataAlbumFn,
         dataAlbum,
         nextSong,
-        setNextSong
+        setNextSong,
+        setPreviousSong,
+        previousSong
       }}
     >
       {children}

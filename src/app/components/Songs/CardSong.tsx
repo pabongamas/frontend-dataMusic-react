@@ -16,13 +16,15 @@ export default function CardSong({
   song,
   artists,
   albumData,
-  nextSong
+  nextSong,
+  previousSong
 }: {
   isEven: boolean;
   song: Songs;
   artists: APIResponseItem[] | undefined;
-  albumData: Album|undefined,
-  nextSong:Songs;
+  albumData: Album|undefined;
+  nextSong:Songs|null;
+  previousSong:Songs|null;
 }) {
   const jwtToken = Cookies.get('jwtTokenDataMusic');
   // Configuración de Axios con el JWT en la cabecera
@@ -32,17 +34,14 @@ export default function CardSong({
   const [isLiked, setIsLiked] = useState(song.isLikedByCurrentUser);
 
   //context for handle to play songs
-  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn,songCurrent,audioRef,isPlaying,setNextSong } = useAudioPlayerContext();
+  const { playAudio,stopAudio,setCurrentSong,setDataAlbumFn,songCurrent,audioRef,isPlaying,setNextSong,setPreviousSong } = useAudioPlayerContext();
 
 
-  // if(songCurrent!==null){
-  //   if(song.songId==songCurrent.songId){
-  //     setIsPlayingSong(isPlaying);
-  //   }
-  // }
   useEffect(() => {
     if (songCurrent && song.songId === songCurrent.songId) {
       setIsPlayingSong(isPlaying);
+      setNextSong(nextSong);
+      setPreviousSong(previousSong);
     }
   }, [songCurrent, isPlaying, song.songId]);
 
@@ -57,7 +56,7 @@ export default function CardSong({
         cache: "no-cache",
       };
       const resSongLiked = await fetch(
-        "http://localhost:8090/datamusic/api/songUser/like/" + song.songId,
+        process.env.NEXT_PUBLIC_BACKEND_API_URL+"/songUser/like/" + song.songId,
         axiosConfig
       );
       const response = await resSongLiked.json();
@@ -77,7 +76,7 @@ export default function CardSong({
         cache: "no-cache",
       };
       const resSongDisLiked = await fetch(
-        "http://localhost:8090/datamusic/api/songUser/like/" + song.songId,
+        process.env.NEXT_PUBLIC_BACKEND_API_URL+"/songUser/like/" + song.songId,
         axiosConfig
       );
       const response = await resSongDisLiked.json();
@@ -97,12 +96,12 @@ export default function CardSong({
 
   function actionPlay(song:Songs){
     setIsPlayingSong(!isPlayingSong);
-    setNextSong(nextSong);
+   
     if(!isPlayingSong){
       if(songCurrent?.songId!==song.songId){
         setCurrentSong(song);
         setDataAlbumFn(albumData);
-        playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
+        playAudio(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/songs/play/${song.songId}`,jwtToken);
       }else{
         if(audioRef!==null){
           playAudio(undefined, undefined);
@@ -116,7 +115,7 @@ export default function CardSong({
           setCurrentSong(song);
           setDataAlbumFn(albumData);
           setIsPlayingSong(true);
-          playAudio(`http://localhost:8090/datamusic/api/songs/play/${song.songId}`,jwtToken);
+          playAudio(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/songs/play/${song.songId}`,jwtToken);
         }
     }
   }

@@ -58,7 +58,7 @@ export default async function albumDetail({
 
   // await new Promise(resolve => setTimeout(resolve, 5000))
   const resAlbum = await fetch(
-    "http://localhost:8090/datamusic/api/albums/" + params.albumId,
+    process.env.NEXT_PUBLIC_BACKEND_API_URL+"/albums/" + params.albumId,
     axiosConfig
   );
   let variableGetDataAlbum: Album | undefined;
@@ -75,7 +75,6 @@ export default async function albumDetail({
       gradientClasses = generateGradient(colorsAlbum);
       listSongs = jsonDat.data.songs;
       routeThumb=jsonDat.data.routeThumb;
-      console.log(routeThumb);
     }
   } else {
     throw new Error(`Error: ${resAlbum.status} ${resAlbum.statusText}`);
