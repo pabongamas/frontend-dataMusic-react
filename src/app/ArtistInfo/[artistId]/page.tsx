@@ -3,7 +3,7 @@ import { useLocalStorage } from "@/app/Hooks/UseLocalStorage";
 import { useEffect, useState } from "react";
 import { Album } from "@/app/Interfaces/AlbumInterface";
 import NavBar from "@/app/components/navbar/Navbar";
-import { HeaderLikedAlbums } from "@/app/page";
+// import { HeaderLikedAlbums } from "@/app/page";
 const page = ({
   params,
 }: {
@@ -11,11 +11,11 @@ const page = ({
     artistId: string;
   };
 }) => {
-  const likedAlbums = HeaderLikedAlbums();
+  // const likedAlbums = HeaderLikedAlbums();
   return (
     <div>
       <main>
-        <NavBar likedAlbums={likedAlbums} />
+        <NavBar  />
         <div>aca va {params.artistId}</div>
       </main>
     </div>
