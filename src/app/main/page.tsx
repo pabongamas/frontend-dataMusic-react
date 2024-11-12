@@ -34,6 +34,7 @@ async function ListAlbums({
     const jsonDat: ResponseData = await resAlbum.json();
       variableGetDataAlbums = jsonDat;
   } else {
+    console.log(resAlbum);
     throw new Error(`Error: ${resAlbum.status} ${resAlbum.statusText}`);
   }
 
