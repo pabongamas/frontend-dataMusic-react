@@ -11,7 +11,7 @@ const nextConfig = {
       ];
     },
     images: {
-      domains: ['scontent.fvga9-1.fna.fbcdn.net'],
+      domains: ['static.vecteezy.com'],
     },
     eslint: {
       // Warning: This allows production builds to successfully complete even if
