@@ -1,9 +1,6 @@
 import ListAlbum from "../components/albums/ListAlbum";
-import { Suspense } from "react";
-import Loading from "./loading";
 import { cookies } from 'next/headers';
 import { ResponseData } from "../Interfaces/Response/Response";
-import { Album } from "../Interfaces/AlbumInterface";
 
 
 async function ListAlbums({
