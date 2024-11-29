@@ -13,7 +13,8 @@ export interface Album {
     name: string;
     artists: APIResponseItem[];
     isAddedLike?:boolean;
-    imgAlbum?:string
+    imgAlbum?:string;
+    pathImageAlbum?:string;
     gender?:Gender;
     year?:string;
   }

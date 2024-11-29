@@ -113,7 +113,7 @@ function AudioPlayer() {
         <div className="flex items-center space-x-4">
           <img
             src={
-              "data:image/png;base64," + dataAlbum?.imgAlbum ||
+               dataAlbum?.pathImageAlbum ||
               "/placeholder.svg"
             }
             alt="Album Art"

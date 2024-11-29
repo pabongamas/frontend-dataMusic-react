@@ -1,5 +1,5 @@
 "use client"; // This is a client component 👈🏽
-import Image from "next/image";
+import Image, { ImageLoader } from "next/image";
 import Link from "next/link";
 import React, { useCallback, useState } from "react";
 import notFound from "../../../../public/img/notFound.png";
@@ -98,13 +98,14 @@ export function AlbumCard({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {album.imgAlbum !== undefined ? (
+        {album.pathImageAlbum !== undefined ? (
           <Image
-            src={"data:image/png;base64," + album.imgAlbum}
+            // src={"data:image/png;base64," + album.imgAlbum}
+            src={ album.pathImageAlbum}
             priority={true}
-            alt={"photo by " + album.name + " by" + descriptionArtists}
-            width={100}
-            height={100}
+            alt={"photo  " + album.name + " by" + descriptionArtists}
+            width={200}
+            height={200}
             className="rounded w-full absolute  h-full"
           />
         ) : (
@@ -150,14 +151,14 @@ export function AlbumCard({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {album.imgAlbum !== undefined ? (
+        {album.pathImageAlbum !== undefined ? (
           <Link href={`${URL_ALBUM_INFO}/${album.albumId}`}>
             <Image
-              src={"data:image/png;base64," + album.imgAlbum}
-              priority={true}
+              src={ album.pathImageAlbum}
+              priority={false}
               alt={"photo by " + album.name + " by" + descriptionArtists}
-              width={100}
-              height={100}
+              width={200}
+              height={200}
               className="rounded w-full absolute  h-full"
             />
           </Link>

@@ -11,7 +11,7 @@ const nextConfig = {
       ];
     },
     images: {
-      domains: ['static.vecteezy.com'],
+      domains: ['static.vecteezy.com','datamusicjava.s3.amazonaws.com'],
     },
     eslint: {
       // Warning: This allows production builds to successfully complete even if
