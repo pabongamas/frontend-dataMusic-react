@@ -10,6 +10,9 @@ import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { resolve } from "path";
 import { error } from "console";
+import { useLikedAlbumsContext } from "@/app/Hooks/LikedAlbumsContext";
+import { ResponseData } from "../../Interfaces/Response/Response";
+import { Album } from "@/app/Interfaces/AlbumInterface";
 
 async function loginFetch(url: string, headers: RequestInit): Promise<any> {
   try {
@@ -31,6 +34,8 @@ async function loginFetch(url: string, headers: RequestInit): Promise<any> {
 }
 
 export default function SignIn() {
+  const { initialLikedAlbums } = useLikedAlbumsContext();
+
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -70,7 +75,7 @@ export default function SignIn() {
           </div>
         ),
       })
-      .then((dataResponse: DefaultResponse) => {
+      .then(async (dataResponse: DefaultResponse) => {
         if (dataResponse.data !== undefined) {
           const token = dataResponse.data.token;
           if (token) {
@@ -81,6 +86,38 @@ export default function SignIn() {
               sameSite: "Strict",
               path: "/",
             });
+            const jwtToken = Cookies.get("jwtTokenDataMusic");
+            const axiosConfig = {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`, // Aquí añadimos el JWT en la cabecera Authorization
+                "Content-Type": "application/json",
+              },
+            };
+            const resAlbumLikedsByUser = await fetch(
+              process.env.NEXT_PUBLIC_BACKEND_API_URL + "/AlbumUser/liked",
+              axiosConfig
+            );
+            if (resAlbumLikedsByUser.ok) {
+              const jsonLikedAlbums: ResponseData =
+                await resAlbumLikedsByUser.json();
+                var arAlbumProcess:Album[]=[];
+                jsonLikedAlbums.data.albums.map(function (album, index) {
+                  arAlbumProcess.push(album);
+                  return album;
+                })
+              
+              initialLikedAlbums(arAlbumProcess);
+
+              // jsonLikedAlbums.data.albums.map(function(album,index){
+              //   console.log(album);
+              //   addLikedAlbum(album);
+              // })
+            } else {
+              throw new Error(
+                `Error: ${resAlbumLikedsByUser.status} ${resAlbumLikedsByUser.statusText}`
+              );
+            }
+
             router.push("/main");
           }
         }
@@ -195,3 +232,4 @@ export default function SignIn() {
     </div>
   );
 }
+async function SetinitialLikedAlbums() {}

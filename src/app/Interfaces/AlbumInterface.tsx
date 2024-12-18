@@ -17,5 +17,6 @@ export interface Album {
     pathImageAlbum?:string;
     gender?:Gender;
     year?:string;
+    nameFile?:string;
   }
   

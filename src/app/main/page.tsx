@@ -15,6 +15,7 @@ async function ListAlbums({
   const pageForApi = currentPage - 1;
 
 
+
   const cookieStore = cookies();
   const jwtToken = cookieStore.get('jwtTokenDataMusic')?.value;
   const axiosConfig = {
@@ -34,7 +35,6 @@ async function ListAlbums({
     const jsonDat: ResponseData = await resAlbum.json();
       variableGetDataAlbums = jsonDat;
   } else {
-    console.log(resAlbum);
     throw new Error(`Error: ${resAlbum.status} ${resAlbum.statusText}`);
   }
 

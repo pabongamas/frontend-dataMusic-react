@@ -57,10 +57,11 @@ export function AlbumCard({
       : "opacity-0"
   }`;
 
-  const addAlbumClick = () => {
-    setIsAddedLikeAlbum(true);
-    // onAddLikedAlbum(album);
-    addLikedAlbum(album);
+  const addAlbumClick = async () => {
+    var stateAdd = await addLikedAlbum(album);
+    if (stateAdd) {
+      setIsAddedLikeAlbum(true);
+    }
   };
   const removeAlbumClick = () => {
     setIsAddedLikeAlbum(false);
@@ -101,7 +102,7 @@ export function AlbumCard({
         {album.pathImageAlbum !== undefined ? (
           <Image
             // src={"data:image/png;base64," + album.imgAlbum}
-            src={ album.pathImageAlbum}
+            src={album.pathImageAlbum}
             priority={true}
             alt={"photo  " + album.name + " by" + descriptionArtists}
             width={200}
@@ -154,7 +155,7 @@ export function AlbumCard({
         {album.pathImageAlbum !== undefined ? (
           <Link href={`${URL_ALBUM_INFO}/${album.albumId}`}>
             <Image
-              src={ album.pathImageAlbum}
+              src={album.pathImageAlbum}
               priority={false}
               alt={"photo by " + album.name + " by" + descriptionArtists}
               width={200}

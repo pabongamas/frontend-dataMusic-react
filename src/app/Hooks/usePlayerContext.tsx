@@ -107,7 +107,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
 export const useAudioPlayerContext = () => {
   const context = useContext(AudioPlayerContext);
   if (!context) {
-    throw new Error("useLikedAlbums must be used within a LikedAlbumsProvider");
+    throw new Error("useLikedAlbums must be used within a useAudioPlayerContext");
   }
   return context;
 };

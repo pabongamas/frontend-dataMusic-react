@@ -16,7 +16,6 @@ import { AlbumCard } from "@/app/components/albums/AlbumCard";
 import {ImgAlbumWithContext} from "./imgAlbum";
 import Cookies from 'js-cookie';
 import { cookies } from 'next/headers';
-// import { useLikedAlbumsContext } from "@/app/Hooks/LikedAlbumsContext";
 
 export default async function albumDetail({
   params,
