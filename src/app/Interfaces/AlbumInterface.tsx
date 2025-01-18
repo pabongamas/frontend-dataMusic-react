@@ -18,5 +18,6 @@ export interface Album {
     gender?:Gender;
     year?:string;
     nameFile?:string;
+    cover?:string;
   }
   

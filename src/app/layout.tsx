@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { LikedAlbumsProvider } from "@/app/Hooks/LikedAlbumsContext";
 
+import { ThemeProvider } from "@/lib/providerTheme";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,13 +18,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-      <LikedAlbumsProvider>
-        <Toaster position="bottom-left"/>
-        {children}
-     </LikedAlbumsProvider>
-        </body>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body suppressHydrationWarning={true} className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <LikedAlbumsProvider>
+            <Toaster position="bottom-left" />
+            {children}
+          </LikedAlbumsProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

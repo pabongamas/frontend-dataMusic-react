@@ -38,18 +38,21 @@ export default async function albumDetail({
     },
     cache:"no-cache",
   };
-  function generateGradient(colors: Colors[]): string {
+  function generateGradient(colors:string|undefined): string {
     if (colors !== undefined) {
-      if (colors.length === 0)
-        return "linear-gradient(to bottom, #121212, #121212)";
-      if (colors.length === 1)
-        return `linear-gradient(to bottom, ${colors[0].colorHex}, #121212)`;
-      const gradientStops = colors.map((color, index) => {
-        const percentage = (index / (colors.length - 1)) * 100;
-        return `${color.colorHex} ${percentage}%`;
-      });
+      if (colors.length === 0){
+          return "linear-gradient(to bottom, #121212, #121212)";
+      }else{
+        //search by []
+        var separateColors=colors.match(/#[A-Fa-f0-9]{6}/g);
+        if(separateColors!==null){
+        return `linear-gradient(to bottom, ${separateColors.join(", ")})`;
 
-      return `linear-gradient(to bottom, ${gradientStops.join(", ")})`;
+        }
+      return "linear-gradient(to bottom, #121212, #121212)";
+
+      }
+      return "linear-gradient(to bottom, #121212, #121212)";
     } else {
       return "linear-gradient(to bottom, #121212, #121212)";
     }
@@ -61,7 +64,7 @@ export default async function albumDetail({
     axiosConfig
   );
   let variableGetDataAlbum: Album | undefined;
-  let colorsAlbum: Colors[];
+  let colorsAlbum: string| undefined;
   var listSongs: Songs[] = [];
   let gradientClasses;
   let routeThumb:string;
@@ -70,7 +73,7 @@ export default async function albumDetail({
     const jsonDat: ResponseDataAlbum = await resAlbum.json();
     if (jsonDat.data?.album) {
       variableGetDataAlbum = jsonDat.data.album;
-      colorsAlbum = jsonDat.data.colors;
+      colorsAlbum = jsonDat.data.album.cover;
       gradientClasses = generateGradient(colorsAlbum);
       listSongs = jsonDat.data.songs;
       routeThumb=jsonDat.data.routeThumb;

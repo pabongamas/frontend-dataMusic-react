@@ -6,8 +6,6 @@ import notFound from "../../../../public/img/notFound.png";
 import { RemoveAlbumIcon } from "./../../components/Icons/RemoveAlbum";
 import { Album } from "./../../Interfaces/AlbumInterface";
 import { AddAlbumIcon } from "./../Icons/AddAlbum";
-import { NOTFOUND } from "dns";
-import { Console } from "console";
 import { usePathname } from "next/navigation";
 import { useLikedAlbumsContext } from "@/app/Hooks/LikedAlbumsContext";
 
@@ -145,7 +143,7 @@ export function AlbumCard({
   return (
     <div
       key={album.albumId}
-      className="rounded bg-principal-550 hover:bg-principal-580 cursor-pointer transition ease-in-out delay-150 flex flex-col gap-4 p-4"
+      className="rounded  hover:bg-neutral-400 bg-neutral-200 dark:bg-principal-600 dark:hover:bg-principal-550 cursor-pointer transition ease-in-out delay-150 flex flex-col gap-4 p-4"
     >
       <div
         className="rounded relative w-full pb-bottom-full cursor-pointer h-full"
@@ -198,12 +196,12 @@ export function AlbumCard({
         )}
       </div>
       <div className="flex flex-col">
-        <h3 className="font-bold whitespace-nowrap text-ellipsis overflow-hidden font">
+        <h3 className="font-bold whitespace-nowrap text-ellipsis overflow-hidden font text-sub">
           {album.name}
         </h3>
         <span
           key={album.albumId}
-          className="gap-1 text-ellipsis overflow-hidden whitespace-nowrap w-full "
+          className="gap-1 text-ellipsis overflow-hidden whitespace-nowrap w-full text-sub"
         >
           {album.artists.length > 0 ? descriptionArtists : NOT_FOUND_ARTIST}
         </span>
