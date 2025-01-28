@@ -1,3 +1,3 @@
 export interface Song{
-    name:string,duration:string,numberSong:number,explicit:boolean
+    songId:string,name:string,duration:string,numberSong:number,explicit:boolean,file:File|undefined
 }

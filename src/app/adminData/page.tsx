@@ -10,6 +10,7 @@ import {
   AlertCircle,
   AudioLines,
   Calendar as CalendarIcon,
+  Trash
 } from "lucide-react";
 import {
   Card,
@@ -18,12 +19,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -112,6 +123,7 @@ const AdminDataPage = () => {
   const [genres, setGenres] = useState<Gender[]>([]);
   const [dateReleaseAlbum, setDateReleaseAlbum] = useState<Date>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [songsList, setSongsList] = useState<Song[]>([]);
 
   const options = [
     { id: "genre", desc: "Genre", icon: CirclePlus },
@@ -128,6 +140,34 @@ const AdminDataPage = () => {
     }
   }, [activeTab]);
 
+  const addSongsToList = () => {
+    var numberSongsAdd =
+      (songsList.length > 0 ? songsList[songsList.length - 1].numberSong : 0) +
+      1;
+    var objectRowSong: Song = {
+      songId: crypto.randomUUID(),
+      name: "",
+      duration: "",
+      numberSong: numberSongsAdd,
+      explicit: false,
+      file: undefined,
+    };
+    setSongsList((prev) => [...prev, objectRowSong]); // Agregar al estado existente
+  };
+
+  const handleInputSongsChange = (
+    songId: string,
+    field: keyof Song,
+    value: string | number | boolean | File
+  ) => {
+    setSongsList((prev) =>
+      prev.map((song) =>
+        song.songId === songId ? { ...song, [field]: value } : song
+      )
+    );
+  };
+
+  // Function for add cover when its created  an album
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]; // Obtén el primer archivo cargado
     if (file && file.type.startsWith("image/")) {
@@ -413,13 +453,12 @@ const AdminDataPage = () => {
         if (!formSongs.album) errorsSong.album = "Album  is required.";
         if (!formSongs.artist) errorsSong.artist = "Artist is required";
         if (!formSongs.songs) errorsSong.songs = "Songs is required";
-        console.log(errorsSong);
         setErrorSong(errorsSong);
         const hasErrorsSongs = Object.values(errorsSong).some(
           (error) => error !== ""
         );
         if (!hasErrorsSongs) {
-          // Si no hay errores, envía el formulario
+          console.log(songsList);
         }
     }
   };
@@ -840,9 +879,91 @@ const AdminDataPage = () => {
             )}
             {formSongs.album !== "" && (
               <div className="space-y-2">
-                <Button className="w-1/4">Add Slot For song</Button>
+                <Button onClick={() => addSongsToList()} className="w-1/6">
+                  Add Slot For song
+                </Button>
               </div>
             )}
+            {songsList.length > 0 && (
+              <div className="h-72 overflow-y-auto">
+                <Table>
+                  <TableCaption>List Songs of album</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/5 ">Name</TableHead>
+                      <TableHead className="w-1/5 ">Duration</TableHead>
+                      <TableHead className="w-1/5 ">Number Song</TableHead>
+                      <TableHead className="text-right w-1/5 ">
+                        Explicit
+                      </TableHead>
+                      <TableHead className="text-right w-1/5 ">
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {songsList.map((song) => (
+                      <TableRow key={song.songId}>
+                        <TableCell className="font-medium">
+                          <Input
+                            id={`nameSong_${song.songId}`}
+                            className={`w-full`}
+                            placeholder="Enter Song name"
+                            value={song.name}
+                            onChange={(e) =>
+                              handleInputSongsChange(
+                                song.songId,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="text"
+                            id={`songDuration_${song.songId}`}
+                            name="duration"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            id={`songNumber_${song.songId}`}
+                            name="number"
+                            value={song.numberSong}
+                            disabled={true}
+                            className="text-right"
+                          />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Switch
+                            checked={song.explicit}
+                            onCheckedChange={(e) =>
+                              handleInputSongsChange(
+                                song.songId,
+                                "explicit",
+                                !song.explicit
+                              )
+                            }
+                          />
+                        </TableCell>
+                        <TableCell className="text-right" title={`Delete Song ${song.name}`}>
+                          <div className="flex justify-center items-center">
+                            <Trash className="text-right hover:text-red-600 transition "
+                             onClick={(e)=>{
+                              setSongsList((prevSongsList) =>
+                                prevSongsList.filter((songRow) => songRow.songId !== song.songId)
+                              );
+                             }}/>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+
             <Button
               disabled={isLoading}
               className="w-full"
