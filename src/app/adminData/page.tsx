@@ -10,7 +10,7 @@ import {
   AlertCircle,
   AudioLines,
   Calendar as CalendarIcon,
-  Trash
+  Trash,
 } from "lucide-react";
 import {
   Card,
@@ -48,6 +48,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { fecthToUse } from "../components/utilities/fetchReuse";
 import { DefaultResponse } from "@/app/Interfaces/Response/Response";
@@ -57,6 +68,7 @@ import { Artist } from "../Interfaces/ArtistInterface";
 import { Gender } from "../Interfaces/GenderInterface";
 import { Song } from "../Interfaces/SongInterface";
 import { Album } from "../Interfaces/AlbumInterface";
+import { calcSecs } from "../components/Songs/CardSong";
 
 import { div } from "framer-motion/client";
 
@@ -124,6 +136,73 @@ const AdminDataPage = () => {
   const [dateReleaseAlbum, setDateReleaseAlbum] = useState<Date>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [songsList, setSongsList] = useState<Song[]>([]);
+  const [isDialogDeleteSongOpen, setIsDialogDeleteSongOpen] = useState(false);
+  const [songToDelete, setSongToDelete] = useState<string | null>(null);
+
+  const handleDeleteSongClick = (song: Song) => {
+    if (song.loaded) {
+      setSongToDelete(song.songId);
+      setIsDialogDeleteSongOpen(true);
+    } else {
+      setSongsList((prevSongsList) => {
+        // list is filter to delete the selected row
+        const updatedSongsList = prevSongsList.filter(
+          (songRow) => songRow.songId !== song.songId
+        );
+
+        // re-assign values of number song way secuencially
+        const renumberedSongsList = updatedSongsList.map((songRow, index) => ({
+          ...songRow,
+          numberSong: index + 1, // index + 1 to start since number 1
+        }));
+
+        return renumberedSongsList;
+      });
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (songToDelete) {
+      const params: RequestInit = {
+        cache: "no-cache",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      };
+      try {
+        const response = await fecthToUse(
+          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/songs/delete/${songToDelete}`,
+          params
+        );
+        console.log(response);
+        if (response.state) {
+          setSongsList((prevSongsList) => {
+            // list is filter to delete the selected row
+            const updatedSongsList = prevSongsList.filter(
+              (songRow) => songRow.songId !== songToDelete
+            );
+
+            // re-assign values of number song way secuencially
+            const renumberedSongsList = updatedSongsList.map(
+              (songRow, index) => ({
+                ...songRow,
+                numberSong: index + 1, // index + 1 to start since number 1
+              })
+            );
+
+            return renumberedSongsList;
+          });
+          setIsDialogDeleteSongOpen(false);
+          setSongToDelete(null);
+          toast.success("Song has been deleted Succesfully!!")
+        }
+      } catch (error) {
+        toast.error("Failed to delete the song. Please try again.");
+      }
+    }
+  };
 
   const options = [
     { id: "genre", desc: "Genre", icon: CirclePlus },
@@ -139,41 +218,80 @@ const AdminDataPage = () => {
       fetchArtists();
     }
   }, [activeTab]);
+  useEffect(() => {
+    setFormSongs((prev) => ({
+      ...prev,
+      songs: songsList,
+    }));
+  }, [songsList]); // E
 
   const addSongsToList = () => {
     var numberSongsAdd =
       (songsList.length > 0 ? songsList[songsList.length - 1].numberSong : 0) +
       1;
     var objectRowSong: Song = {
-      songId: crypto.randomUUID(),
+      songId: generateRandomLong(),
       name: "",
       duration: "",
       numberSong: numberSongsAdd,
       explicit: false,
       file: undefined,
+      loaded: false,
+      edited: false,
+      nameFile: "",
     };
-    setSongsList((prev) => [...prev, objectRowSong]); // Agregar al estado existente
+    setSongsList((prev) => [...prev, objectRowSong]); // add to Exist state
+    if (songsList.length >= 0) errorSong.songs = "";
   };
+
+  function generateRandomLong() {
+    const buffer = new ArrayBuffer(8);
+    const view = new DataView(buffer);
+
+    // Fill the buffer with random values
+    crypto.getRandomValues(new Uint8Array(buffer));
+
+    // Read the buffer as a 64-bit signed integer (BigInt)
+    const randomLong = view.getBigInt64(0, true); // true for little-endian
+
+    // Convert BigInt to a string (to avoid losing precision)
+    return randomLong.toString();
+  }
 
   const handleInputSongsChange = (
     songId: string,
     field: keyof Song,
-    value: string | number | boolean | File
+    value: string | number | boolean | File | undefined
   ) => {
     setSongsList((prev) =>
-      prev.map((song) =>
-        song.songId === songId ? { ...song, [field]: value } : song
-      )
+      prev.map((song) => {
+        if (song.songId === songId) {
+          // Check if the new value is different from the current value
+          const isValueDifferent = song[field] !== value;
+
+          // If the value is different, set edited to true
+          const updatedSong = {
+            ...song,
+            [field]: value,
+            edited: isValueDifferent ? true : song.edited,
+          };
+
+          return updatedSong;
+        }
+        return song;
+      })
     );
   };
 
   // Function for add cover when its created  an album
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]; // Obtén el primer archivo cargado
+  const handleFileChangeCoverAlbum = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0]; //  get the first file loaded
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
 
-      // Define qué hacer cuando el archivo sea leído
+      // define what to do when the file will be readed Define qué hacer cuando el archivo sea leído
       reader.onload = () => {
         if (typeof reader.result === "string") {
           setImagePreview(reader.result); // Guarda la imagen como URL en el estado
@@ -249,6 +367,7 @@ const AdminDataPage = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/albumsArtist/artist/${artistId}`,
         params
       );
+      setSongsList([]);
       if (response.data) {
         const albumsArray = response.data.albumsArtist.map(
           (val: any) => val.album
@@ -264,6 +383,35 @@ const AdminDataPage = () => {
       toast.error("Failed to fetch albums of the artist . Please try again.");
     }
   };
+  const fetchSongsByAlbum = async (albumId: string) => {
+    const params: RequestInit = {
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    };
+    try {
+      const response = await fecthToUse(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/songs/album/${albumId}`,
+        params
+      );
+      if (response.data) {
+        const songsAlbum: Song[] = response.data.songsByAlbum;
+        console.log(songsAlbum);
+        songsAlbum.map((song, index) => {
+          song.loaded = true;
+          song.edited = false;
+          var secsSong = calcSecs(Number(song.duration));
+          song.duration = secsSong;
+        });
+        setSongsList(songsAlbum);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch Song of the Album . Please try again.");
+    }
+  };
+
   const saveAlbum = async () => {
     setIsLoading(true);
     const formData = new FormData();
@@ -328,6 +476,85 @@ const AdminDataPage = () => {
       .catch(async (error: any) => {
         setIsLoading(false);
       });
+  };
+  const saveSongs = async () => {
+    var atLeastOneLoadedOdited = false;
+    formSongs.songs.map((song, index) => {
+      if (!song.loaded || (song.loaded && song.edited)) {
+        atLeastOneLoadedOdited = true;
+        setIsLoading(true);
+        const minutesDuration = Number(song.duration.split(":")[0]);
+        const secsDuration = Number(song.duration.split(":")[1]);
+        const durationTotal = minutesDuration * 60 + secsDuration;
+        const formData = new FormData();
+        const songForm = {
+          name: song.name,
+          duration: durationTotal,
+          numberSong: song.numberSong,
+          explicit: song.explicit,
+          albumId: formSongs.album,
+          edited: song.edited,
+          loaded: song.loaded,
+          songId: Number(song.songId),
+          nameFile: song.nameFile,
+        };
+        const jsonSongs = JSON.stringify(songForm);
+        const blobSongs = new Blob([jsonSongs], {
+          type: "application/json",
+        });
+        formData.append("song", blobSongs);
+        if (song.file) {
+          formData.append("file", song.file);
+        }
+        console.log(jsonSongs);
+        const params: RequestInit = {
+          method: "POST",
+          cache: "no-cache",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        };
+
+        const saveSongPost = fecthToUse(
+          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/songs/save`,
+          params
+        );
+        toast
+          .promise(saveSongPost, {
+            loading: "Adding Song..",
+            success: (
+              <div>
+                <strong>Success!</strong> <br />
+                it has been Added !!
+              </div>
+            ),
+            error: (error) => (
+              <div>
+                Failed to Adding. Please try again. <br />
+                <strong>Error:</strong> {error.message}
+              </div>
+            ),
+          })
+          .then(async (dataResponse: DefaultResponse) => {
+            if (dataResponse.data !== undefined) {
+              setIsLoading(false);
+              setFormSongs({
+                album: "",
+                artist: "",
+                songs: [],
+              });
+              setSongsList([]);
+            }
+          })
+          .catch(async (error: any) => {
+            setIsLoading(false);
+          });
+      }
+    });
+    if (!atLeastOneLoadedOdited) {
+      toast.error("You haven't modified any song");
+    }
   };
   const addOption = async (value: string) => {
     switch (value) {
@@ -449,16 +676,16 @@ const AdminDataPage = () => {
           artist: "",
           songs: "",
         };
-
         if (!formSongs.album) errorsSong.album = "Album  is required.";
         if (!formSongs.artist) errorsSong.artist = "Artist is required";
-        if (!formSongs.songs) errorsSong.songs = "Songs is required";
+        if (formSongs.songs.length === 0)
+          errorsSong.songs = "Songs is required";
         setErrorSong(errorsSong);
         const hasErrorsSongs = Object.values(errorsSong).some(
           (error) => error !== ""
         );
         if (!hasErrorsSongs) {
-          console.log(songsList);
+          saveSongs();
         }
     }
   };
@@ -746,7 +973,7 @@ const AdminDataPage = () => {
               <Input
                 id="picture"
                 type="file"
-                onChange={handleFileChange}
+                onChange={handleFileChangeCoverAlbum}
                 className={`w-full ${
                   errorAlbum.year
                     ? "border border-red-500 text-red-900 placeholder-red-700 rounded-lg focus:ring-red-500"
@@ -843,6 +1070,7 @@ const AdminDataPage = () => {
                   value={formSongs.album}
                   onValueChange={(value) => {
                     setFormSongs({ ...formSongs, album: value });
+                    fetchSongsByAlbum(value);
                     if (errorSong.album !== "")
                       setErrorSong((prev) => ({
                         ...prev,
@@ -884,20 +1112,29 @@ const AdminDataPage = () => {
                 </Button>
               </div>
             )}
+            {errorSong.songs && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                <span className="font-medium">Oops!</span> {errorSong.songs}
+              </p>
+            )}
             {songsList.length > 0 && (
               <div className="h-72 overflow-y-auto">
                 <Table>
                   <TableCaption>List Songs of album</TableCaption>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/5 ">Name</TableHead>
-                      <TableHead className="w-1/5 ">Duration</TableHead>
-                      <TableHead className="w-1/5 ">Number Song</TableHead>
-                      <TableHead className="text-right w-1/5 ">
+                      <TableHead className="w-[30%] ">Name</TableHead>
+                      <TableHead className="w-[20%] ">Duration</TableHead>
+                      <TableHead className="w-[15%] text-center ">
+                        Number Song
+                      </TableHead>
+                      <TableHead className="text-center w-[10%] ">
                         Explicit
                       </TableHead>
-                      <TableHead className="text-right w-1/5 ">
+                      <TableHead className="text-center w-[20%] ">
+                        File Song
                       </TableHead>
+                      <TableHead className="text-right w-[5%] "></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -923,6 +1160,14 @@ const AdminDataPage = () => {
                             type="text"
                             id={`songDuration_${song.songId}`}
                             name="duration"
+                            value={song.duration}
+                            onChange={(e) =>
+                              handleInputSongsChange(
+                                song.songId,
+                                "duration",
+                                e.target.value
+                              )
+                            }
                           />
                         </TableCell>
                         <TableCell>
@@ -935,7 +1180,7 @@ const AdminDataPage = () => {
                             className="text-right"
                           />
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-center">
                           <Switch
                             checked={song.explicit}
                             onCheckedChange={(e) =>
@@ -947,14 +1192,41 @@ const AdminDataPage = () => {
                             }
                           />
                         </TableCell>
-                        <TableCell className="text-right" title={`Delete Song ${song.name}`}>
+                        <TableCell>
+                          <Input
+                            type="file"
+                            id={`songFile_${song.songId}`}
+                            className="text-right"
+                            accept="audio/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (!file.type.startsWith("audio/")) {
+                                  toast.error(
+                                    "Por favor, selecciona un archivo de audio válido."
+                                  );
+                                  return;
+                                }
+                                handleInputSongsChange(
+                                  song.songId,
+                                  "file",
+                                  file
+                                );
+                              }
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          className="text-right"
+                          title={`Delete Song ${song.name}`}
+                        >
                           <div className="flex justify-center items-center">
-                            <Trash className="text-right hover:text-red-600 transition "
-                             onClick={(e)=>{
-                              setSongsList((prevSongsList) =>
-                                prevSongsList.filter((songRow) => songRow.songId !== song.songId)
-                              );
-                             }}/>
+                            <Trash
+                              className="text-right hover:text-red-600 transition "
+                              onClick={(e) => {
+                                handleDeleteSongClick(song);
+                              }}
+                            />
                           </div>
                         </TableCell>
                       </TableRow>
@@ -1026,6 +1298,28 @@ const AdminDataPage = () => {
           </Tabs>
         </CardContent>
       </Card>
+      <AlertDialog
+        open={isDialogDeleteSongOpen}
+        onOpenChange={setIsDialogDeleteSongOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              song from this album.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDialogDeleteSongOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

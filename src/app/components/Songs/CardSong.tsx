@@ -189,7 +189,7 @@ export default function CardSong({
   );
 }
 
-function calcSecs(secs: number) {
+export function calcSecs(secs: number) {
   const minutes = Math.floor(secs / 60);
   const remainingSeconds = secs % 60;
   // Asegurarse de que los segundos siempre tengan dos dígitos
