@@ -15,7 +15,7 @@ const page = ({
   return (
     <div>
       <main>
-        <NavBar  />
+      <NavBar isAdmin={false} />
         <div>aca va {params.artistId}</div>
       </main>
     </div>
